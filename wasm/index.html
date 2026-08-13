@@ -23,7 +23,8 @@
       rel="rust"
       data-bin="ochub-docs-renderer"
       data-bindgen-target="web"
-      data-wasm-opt="0"
+      data-wasm-opt="z"
+      data-wasm-opt-params="--enable-threads --enable-bulk-memory --enable-bulk-memory-opt --enable-mutable-globals --enable-nontrapping-float-to-int"
     />
     <style>
       * { box-sizing: border-box; }

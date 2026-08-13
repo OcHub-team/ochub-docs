@@ -1,8 +1,10 @@
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const distRoot = path.resolve("dist");
-const wasmEntry = path.join(distRoot, "wasm", "index.html");
+const wasmRoot = path.join(distRoot, "wasm");
+const wasmEntry = path.join(wasmRoot, "index.html");
+const maxWasmBytes = 10 * 1024 * 1024;
 
 async function listHtml(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -21,6 +23,26 @@ async function listHtml(directory) {
 }
 
 await access(wasmEntry);
+
+const wasmFiles = (await readdir(wasmRoot))
+  .filter((file) => file.endsWith(".wasm"))
+  .map((file) => path.join(wasmRoot, file));
+
+if (wasmFiles.length !== 1) {
+  console.error(`Expected one generated WASM binary, found ${wasmFiles.length}.`);
+  process.exitCode = 1;
+} else {
+  const { size } = await stat(wasmFiles[0]);
+  const sizeMiB = (size / 1024 / 1024).toFixed(2);
+  const maxMiB = (maxWasmBytes / 1024 / 1024).toFixed(0);
+
+  if (size > maxWasmBytes) {
+    console.error(`WASM size check: ${sizeMiB} MiB exceeds ${maxMiB} MiB.`);
+    process.exitCode = 1;
+  } else {
+    console.log(`WASM size check: ${sizeMiB} MiB (limit ${maxMiB} MiB).`);
+  }
+}
 
 const htmlFiles = await listHtml(distRoot);
 const failures = [];
