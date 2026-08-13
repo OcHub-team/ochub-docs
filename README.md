@@ -27,4 +27,14 @@ pnpm check
 `pnpm build:wasm` writes generated artifacts to `public/wasm/`; the directory is
 ignored and Astro copies it into the final static site.
 
+## Deployment
+
+GitHub Actions compiles the Rust/WASM renderer, builds the static site, runs all
+checks, and deploys `dist/` to the `ochub-docs` Cloudflare Worker on successful
+pushes to `main`. The workflow can also be run manually from GitHub Actions.
+
+The repository requires `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`
+secrets. Cloudflare Workers Builds must remain disconnected to avoid duplicate
+deployments.
+
 Licensed under GPL-3.0-or-later.

@@ -1,9 +1,12 @@
 {
   // Cloudflare Workers static-assets config.
   //
-  // The site is deployed by Workers Builds: Cloudflare clones the repo,
-  // runs `pnpm build` from this directory, then runs `npx wrangler deploy`.
-  // That deploy command is a Workers command, so this file must describe a
+  // GitHub Actions builds the site (including the Rust/WASM renderer) and
+  // deploys the resulting `dist` directory after every successful main-branch
+  // check. Cloudflare's repository integration stays disconnected so there is
+  // only one deployment pipeline.
+  //
+  // The deploy command is a Workers command, so this file must describe a
   // Worker — `assets.directory` — and NOT `pages_build_output_dir`. Setting
   // the Pages key here makes wrangler warn that it's a Pages project and
   // then fail with "Missing entry-point to Worker script or to assets
