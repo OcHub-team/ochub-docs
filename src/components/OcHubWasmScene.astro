@@ -27,7 +27,10 @@ const query = new URLSearchParams({ scene, locale, app });
 if (currentName) query.set("currentName", currentName);
 if (connectionName) query.set("connectionName", connectionName);
 if (endpoint) query.set("endpoint", endpoint);
-const src = `/wasm/?${query.toString()}`;
+// Use the concrete Trunk entry point. Astro's production preview resolves a
+// directory URL such as `/wasm/`, but its development server treats that URL
+// as a content route and returns the documentation 404 page instead.
+const src = `/wasm/index.html?${query.toString()}`;
 const copy = {
   en: { runtime: "WebGPU renderer", open: "Open live view" },
   zh: { runtime: "WebGPU 渲染器", open: "打开实时界面" },

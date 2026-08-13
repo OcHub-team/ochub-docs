@@ -1,6 +1,6 @@
 {
   "name": "ochub-docs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.10.0",
@@ -14,7 +14,8 @@
     "lint:docs": "nimbus-docs lint",
     "lint:docs:fix": "nimbus-docs lint --fix",
     "check:i18n": "node scripts/check-i18n-docs.mjs",
-    "check": "pnpm lint:docs && pnpm check:i18n && pnpm typecheck && pnpm build",
+    "check:wasm-routes": "node scripts/check-wasm-routes.mjs",
+    "check": "pnpm lint:docs && pnpm check:i18n && pnpm typecheck && pnpm build && pnpm check:wasm-routes",
     "prepreview:cf": "pnpm build",
     "preview:cf": "wrangler dev",
     "predeploy": "pnpm typecheck && pnpm build",
