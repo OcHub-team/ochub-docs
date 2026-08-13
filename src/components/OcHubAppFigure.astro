@@ -1,0 +1,83 @@
+---
+import OcHubWasmScene from "./OcHubWasmScene.astro";
+
+type Locale = "en" | "zh" | "ja";
+type Screen = "connections" | "editor" | "providers";
+
+interface Props {
+  locale?: Locale;
+  screen?: Screen;
+  app?: string;
+  currentName?: string;
+  connectionName?: string;
+  endpoint?: string;
+}
+
+const {
+  locale = "en",
+  screen = "connections",
+  app = "Claude Code",
+  currentName,
+  connectionName,
+  endpoint,
+} = Astro.props;
+
+const titles = {
+  en: {
+    connections: "Live OcHub connection page rendered by GPUI WebAssembly",
+    editor: "Live OcHub connection editor rendered by GPUI WebAssembly",
+    providers: "Live OcHub model provider page rendered by GPUI WebAssembly",
+  },
+  zh: {
+    connections: "由 GPUI WebAssembly 实时渲染的 OcHub 连接页面",
+    editor: "由 GPUI WebAssembly 实时渲染的 OcHub 连接编辑器",
+    providers: "由 GPUI WebAssembly 实时渲染的 OcHub 模型供应商页面",
+  },
+  ja: {
+    connections: "GPUI WebAssembly でリアルタイム描画する OcHub 接続ページ",
+    editor: "GPUI WebAssembly でリアルタイム描画する OcHub 接続エディター",
+    providers: "GPUI WebAssembly でリアルタイム描画する OcHub モデルプロバイダーページ",
+  },
+} as const;
+---
+
+<figure class="ochub-wasm-figure">
+  <OcHubWasmScene
+    scene={screen}
+    locale={locale}
+    app={app}
+    currentName={currentName}
+    connectionName={connectionName}
+    endpoint={endpoint}
+    title={titles[locale][screen]}
+  />
+  <figcaption>
+    <span aria-hidden="true"></span>
+    {titles[locale][screen]}
+  </figcaption>
+</figure>
+
+<style>
+  .ochub-wasm-figure {
+    width: min(68rem, calc(100cqw - 1rem));
+    margin: 2rem 50%;
+    transform: translateX(-50%);
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    margin-top: .75rem;
+    color: var(--nb-muted-foreground);
+    font-size: .75rem;
+    text-align: center;
+  }
+  figcaption span {
+    width: .45rem;
+    height: .45rem;
+    border-radius: 50%;
+    background: var(--nb-success);
+    box-shadow: 0 0 0 .2rem var(--nb-success-muted);
+  }
+</style>

@@ -1,0 +1,13 @@
+[build]
+target = "index.html"
+dist = "../public/wasm"
+public_url = "/wasm/"
+
+[serve]
+addresses = ["127.0.0.1"]
+port = 8080
+open = false
+
+[serve.headers]
+"Cross-Origin-Embedder-Policy" = "require-corp"
+"Cross-Origin-Opener-Policy" = "same-origin"

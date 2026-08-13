@@ -1,0 +1,27 @@
+---
+import OcHubWasmScene from "./OcHubWasmScene.astro";
+
+type Locale = "en" | "zh" | "ja";
+
+interface Props {
+  locale?: Locale;
+  visual: string;
+  app?: string;
+}
+
+const { locale = "en", visual, app = "Claude Code" } = Astro.props;
+const title =
+  locale === "zh"
+    ? `OcHub 操作场景：${visual}`
+    : locale === "ja"
+      ? `OcHub 操作シーン：${visual}`
+      : `OcHub action scene: ${visual}`;
+---
+
+<OcHubWasmScene
+  scene={visual}
+  locale={locale}
+  app={app}
+  title={title}
+  compact
+/>

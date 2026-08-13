@@ -1,0 +1,153 @@
+---
+type Locale = "en" | "zh" | "ja";
+
+interface Props {
+  scene: string;
+  locale?: Locale;
+  app?: string;
+  currentName?: string;
+  connectionName?: string;
+  endpoint?: string;
+  title: string;
+  compact?: boolean;
+}
+
+const {
+  scene,
+  locale = "en",
+  app = "Claude Code",
+  currentName,
+  connectionName,
+  endpoint,
+  title,
+  compact = false,
+} = Astro.props;
+
+const query = new URLSearchParams({ scene, locale, app });
+if (currentName) query.set("currentName", currentName);
+if (connectionName) query.set("connectionName", connectionName);
+if (endpoint) query.set("endpoint", endpoint);
+const src = `/wasm/?${query.toString()}`;
+const copy = {
+  en: { runtime: "WebGPU renderer", open: "Open live view" },
+  zh: { runtime: "WebGPU 渲染器", open: "打开实时界面" },
+  ja: { runtime: "WebGPU レンダラー", open: "ライブ画面を開く" },
+} as const;
+const t = copy[locale];
+---
+
+<div class:list={["wasm-scene", { "is-compact": compact }]} data-wasm-scene>
+  <div class="wasm-scene-loading" aria-hidden="true">
+    <span></span>
+    <div>
+      <strong>GPUI / WASM</strong>
+      <small>{t.runtime}</small>
+    </div>
+  </div>
+  <iframe
+    src={src}
+    title={title}
+    loading="lazy"
+    allow="webgpu"
+    data-wasm-scene-frame
+  ></iframe>
+  <a class="wasm-scene-open" href={src} target="_blank" rel="noopener">
+    <span>{t.open}</span>
+    <span aria-hidden="true">↗</span>
+  </a>
+</div>
+
+<script>
+  const bindWasmScenes = () => {
+    document.querySelectorAll<HTMLElement>("[data-wasm-scene]").forEach((scene) => {
+      if (scene.dataset.bound === "true") return;
+      scene.dataset.bound = "true";
+      const frame = scene.querySelector<HTMLIFrameElement>("[data-wasm-scene-frame]");
+      frame?.addEventListener("load", () => scene.setAttribute("data-loaded", "true"), { once: true });
+    });
+  };
+  bindWasmScenes();
+  document.addEventListener("astro:page-load", bindWasmScenes);
+</script>
+
+<style>
+  .wasm-scene {
+    position: relative;
+    width: 100%;
+    min-height: clamp(30rem, 66vw, 44rem);
+    overflow: hidden;
+    border: 1px solid var(--nb-border-strong);
+    border-radius: .75rem;
+    background: var(--nb-muted);
+    box-shadow: var(--nb-shadow-lg);
+  }
+  .wasm-scene.is-compact {
+    min-height: clamp(24rem, 58vw, 34rem);
+    border-radius: .55rem;
+    box-shadow: var(--nb-shadow);
+  }
+  iframe {
+    display: block;
+    width: 100%;
+    height: clamp(30rem, 66vw, 44rem);
+    border: 0;
+    background: #151613;
+    opacity: 0;
+    transition: opacity 220ms cubic-bezier(.25, 1, .5, 1);
+  }
+  .is-compact iframe { height: clamp(24rem, 58vw, 34rem); }
+  [data-loaded="true"] iframe { opacity: 1; }
+  .wasm-scene-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    color: var(--nb-muted-foreground);
+    pointer-events: none;
+    transition: opacity 150ms cubic-bezier(.7, 0, .84, 0);
+  }
+  [data-loaded="true"] .wasm-scene-loading { opacity: 0; }
+  .wasm-scene-loading span {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--nb-border-strong);
+    border-top-color: var(--nb-primary);
+    border-radius: 50%;
+    animation: scene-spin 900ms linear infinite;
+  }
+  .wasm-scene-loading div { display: flex; flex-direction: column; }
+  .wasm-scene-loading strong { color: var(--nb-foreground); font-family: var(--nb-font-mono); font-size: .72rem; letter-spacing: .08em; }
+  .wasm-scene-loading small { font-size: .72rem; }
+  .wasm-scene-open {
+    position: absolute;
+    right: .75rem;
+    bottom: .75rem;
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: .45rem;
+    padding: .4rem .7rem;
+    border: 1px solid var(--nb-border-strong);
+    border-radius: .45rem;
+    background: var(--nb-card);
+    color: var(--nb-foreground);
+    font-size: .72rem;
+    font-weight: 650;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(.25rem);
+    transition: opacity 180ms cubic-bezier(.25, 1, .5, 1), transform 180ms cubic-bezier(.25, 1, .5, 1);
+  }
+  .wasm-scene:hover .wasm-scene-open,
+  .wasm-scene-open:focus-visible { opacity: 1; transform: none; }
+  @keyframes scene-spin { to { transform: rotate(360deg); } }
+  @media (max-width: 640px), (pointer: coarse) {
+    .wasm-scene-open { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    iframe, .wasm-scene-loading, .wasm-scene-open { transition: none; }
+    .wasm-scene-loading span { animation-duration: 1.8s; }
+  }
+</style>
