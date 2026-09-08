@@ -227,6 +227,116 @@ pub struct SceneView {
 }
 
 impl SceneView {
+    fn codex_guide(&self) -> ochub_ui::gpui::Div {
+        let tr = |en, zh, ja| match self.config.locale.as_str() {
+            "zh" => zh,
+            "ja" => ja,
+            _ => en,
+        };
+        let (title, rows): (&str, Vec<(&str, &str)>) = match self.config.scene.as_str() {
+            "codex-guide-1" => (
+                tr("Model provider", "模型供应商", "モデルプロバイダー"),
+                vec![
+                    (tr("Name", "名称", "名前"), "Example Responses"),
+                    ("URL", "https://api.example.com/openai/v1/responses"),
+                    ("API Key", "••••••••"),
+                    (tr("Protocol", "协议", "プロトコル"), "Responses"),
+                ],
+            ),
+            "codex-guide-2" => (
+                "Codex",
+                vec![
+                    (
+                        tr("Model source", "模型来源", "モデルの接続先"),
+                        tr("Model provider", "模型供应商", "モデルプロバイダー"),
+                    ),
+                    (
+                        tr("Provider", "供应商", "プロバイダー"),
+                        "Example Responses",
+                    ),
+                    (tr("Model", "模型", "モデル"), "gpt-5-codex"),
+                ],
+            ),
+            "codex-guide-3" => (
+                "Codex / ChatGPT",
+                vec![
+                    (tr("Account", "账号", "アカウント"), "ChatGPT"),
+                    (tr("Credentials", "登录凭据", "ログイン情報"), "auth.json"),
+                    (
+                        tr("Virtual login", "虚拟登录", "仮想ログイン"),
+                        tr("Off", "关闭", "無効"),
+                    ),
+                ],
+            ),
+            "codex-guide-4" => (
+                tr("Context management", "上下文管理", "コンテキスト管理"),
+                vec![
+                    (
+                        tr("Context management", "上下文管理", "コンテキスト管理"),
+                        tr("On", "开启", "有効"),
+                    ),
+                    ("enabled", "true"),
+                    ("use_history_notes_extension", "true"),
+                ],
+            ),
+            "codex-guide-5" => (
+                tr("Review and activate", "检查并启用", "確認して有効化"),
+                vec![
+                    (tr("Target", "目标应用", "対象アプリ"), "Codex"),
+                    (
+                        tr("Configuration", "配置文件", "設定ファイル"),
+                        "~/.codex/config.toml",
+                    ),
+                    (
+                        tr("Action in OcHub", "在 OcHub 中操作", "OcHub での操作"),
+                        tr("Save and activate", "保存并启用", "保存して有効化"),
+                    ),
+                ],
+            ),
+            _ => (
+                tr("Verify actual results", "验证实际结果", "実際の結果を確認"),
+                vec![
+                    (tr("Inference", "模型请求", "推論"), "/responses"),
+                    ("History", "alpha/history/v2/*"),
+                    ("Notes", "alpha/notes/v2/*"),
+                    (
+                        tr("Result", "结果", "結果"),
+                        tr("Check service logs", "检查分发服务日志", "配信ログを確認"),
+                    ),
+                ],
+            ),
+        };
+        // Read-only, focused illustrations: no fake save buttons or input events.
+        let mut body = div().flex().flex_col().gap_3().p_4().w_full();
+        body = body.child(
+            div()
+                .text_lg()
+                .font_weight(FontWeight::SEMIBOLD)
+                .child(title),
+        );
+        for (index, (label, value)) in rows.into_iter().enumerate() {
+            body = body.child(
+                div()
+                    .p_3()
+                    .rounded_md()
+                    .border_1()
+                    .border_color(if index == 0 {
+                        theme::accent()
+                    } else {
+                        theme::border()
+                    })
+                    .bg(if index == 0 {
+                        theme::accent_soft()
+                    } else {
+                        theme::inset()
+                    })
+                    .child(div().text_xs().text_color(theme::muted()).child(label))
+                    .child(div().text_sm().child(value)),
+            );
+        }
+        body
+    }
+
     pub fn new(config: SceneConfig) -> Self {
         Self { config }
     }
@@ -1529,21 +1639,26 @@ impl Render for SceneView {
             .map(|width| width as f32)
             .unwrap_or_else(|| window.viewport_size().width.into());
         let appearance = window.appearance();
-        let content = match page {
-            Page::Connections => self.connection_page(copy),
-            Page::Editor => self.editor_page(copy, window_width),
-            Page::Providers => self.providers_page(copy),
-            Page::Mcp | Page::Skills | Page::Sessions => self.tools_page(page, copy),
-            Page::Usage => self.usage_page(copy),
-            Page::Settings | Page::Welcome => self.settings_page(page, copy),
-            Page::Theme => self.theme_page(copy),
-            Page::Sync => self.sync_page(copy),
+        let content = if self.config.scene.starts_with("codex-guide-") {
+            self.codex_guide()
+        } else {
+            match page {
+                Page::Connections => self.connection_page(copy),
+                Page::Editor => self.editor_page(copy, window_width),
+                Page::Providers => self.providers_page(copy),
+                Page::Mcp | Page::Skills | Page::Sessions => self.tools_page(page, copy),
+                Page::Usage => self.usage_page(copy),
+                Page::Settings | Page::Welcome => self.settings_page(page, copy),
+                Page::Theme => self.theme_page(copy),
+                Page::Sync => self.sync_page(copy),
+            }
         };
         // Web cannot resolve desktop system fonts. Use the font bundled by GPUI
         // Web, retaining the registered Noto CJK fallback for Chinese/Japanese.
-        let sidebar = div().when(window_width >= 1000., |sidebar| {
-            sidebar.child(self.sidebar(page, copy, appearance))
-        });
+        let sidebar = div().when(
+            window_width >= 1000. && !self.config.scene.starts_with("codex-guide-"),
+            |sidebar| sidebar.child(self.sidebar(page, copy, appearance)),
+        );
         shell::app_root()
             // Browsers have no native vibrancy backdrop. Composite translucent
             // surfaces over the theme background rather than the dark HTML boot.

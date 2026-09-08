@@ -1,0 +1,26 @@
+export const codexGuide = {
+  zh: [
+    { path: "模型供应商 → 添加", action: "填写供应商名称、分发地址和 API Key，协议选择 Responses，添加实际支持的模型并保存。", done: "供应商卡片出现，只有一个启用的 Responses 通道。", note: "分发必须支持 History / Notes。只有 /responses/compact 不够；API Key 填在供应商中。" },
+    { path: "Codex → 添加连接 → 模型来源", action: "选择“模型供应商”，绑定上一步保存的供应商，再选择模型并填写连接名称。", done: "连接指向正确供应商，模型名称与上游一致。", note: "不要选择“手动配置”，也不要在连接中重复填写第三方 Key。" },
+    { path: "Codex 登录 → OcHub 连接编辑器 → 账号", action: "先在 Codex 中完成真实 ChatGPT 登录，再回到连接编辑器将账号设为 ChatGPT。", done: "Codex 已显示真实登录账号；OcHub 保留现有 auth.json。", note: "选择 ChatGPT 不会替你登录。不启用虚拟登录，也不修改 ID Token。" },
+    { path: "连接编辑器 → 上下文管理", action: "将上下文管理从“自动”改为“开启”。在供应商的模型能力中填写已知上下文窗口；仅声明上游实际支持的能力。", done: "预览包含 Token Budget enabled = true 和 use_history_notes_extension = true。", note: "“待 Codex 验证”不是后端验证成功；Responses Lite 不是开启条件。" },
+    { path: "连接编辑器 → 检查配置 → 保存并启用", action: "检查目标是 Codex、供应商和模型正确，预览指向本地连接路由。点击“保存并启用”，然后退出并重新打开 Codex。", done: "连接标记为当前，Codex 在新会话中使用该连接。", note: "“保存”只存草稿；检查配置不发送模型请求，也不验证上游 History / Notes。" },
+    { path: "新 Codex 会话 → 用量 / 请求日志 → 分发服务日志", action: "先发送一条短请求，核对模型、供应商和返回状态。待 Codex 实际调用历史或笔记工具后，检查对应 alpha/history/v2 或 alpha/notes/v2 请求及结果。", done: "推理正常，且实际历史 / 笔记请求获得可用结果后，才能确认完整功能可用。", note: "仅模型回复或压缩成功不能证明历史可用。401 检查密钥，404 检查接口，通道错误检查单一 Responses 通道；更换 Key 或供应商后新建会话。" },
+  ],
+  en: [
+    { path: "Model providers → Add", action: "Enter the supplier name, distribution URL and API key. Select Responses, add a supported model, then save.", done: "The provider card has exactly one enabled Responses channel.", note: "The distribution service must support History / Notes. Compaction alone is insufficient; keep the key in the supplier." },
+    { path: "Codex → Add connection → Model source", action: "Choose Model provider, bind the supplier you just saved, select its model and name the connection.", done: "The connection names the intended supplier and upstream model.", note: "Do not choose Manual configuration or duplicate the third-party key in this connection." },
+    { path: "Codex sign-in → OcHub connection editor → Account", action: "Complete real ChatGPT sign-in in Codex first. Return to the connection editor and select ChatGPT.", done: "Codex shows your signed-in account and OcHub retains the existing auth.json.", note: "Selecting ChatGPT does not sign you in. Leave virtual login off and do not edit the ID token." },
+    { path: "Connection editor → Context management", action: "Change Auto to On. Enter the known context window under the supplier's model capabilities and declare only capabilities the upstream supports.", done: "The preview contains Token Budget enabled = true and use_history_notes_extension = true.", note: "Pending Codex verification is not backend validation. Responses Lite is not a prerequisite." },
+    { path: "Connection editor → Check configuration → Save and activate", action: "Check Codex, the supplier and model, and the local connection route in the preview. Save and activate, then quit and reopen Codex.", done: "The connection is marked Current and is used by a new Codex session.", note: "Save alone stores a draft. Configuration checks do not send inference or validate upstream History / Notes." },
+    { path: "New Codex session → Usage / request logs → Distribution logs", action: "Send a short prompt and check the supplier, model and response status. When Codex actually uses history or notes, inspect its alpha/history/v2 or alpha/notes/v2 requests and results.", done: "Confirm full support only after inference works and actual history / notes calls return usable results.", note: "A reply or successful compaction alone is insufficient. For 401 check the key; for 404 check endpoint support; for channel errors check the single Responses channel. Start a new session after changing key or supplier." },
+  ],
+  ja: [
+    { path: "モデルプロバイダー → 追加", action: "名前、配信 URL、API Key を入力し、Responses と対応モデルを選択して保存します。", done: "有効な Responses チャネルが一つだけのプロバイダーが表示されます。", note: "配信側に History / Notes の対応が必要です。圧縮だけでは不十分です。Key はプロバイダーに保存します。" },
+    { path: "Codex → 接続を追加 → モデルの接続先", action: "モデルプロバイダーを選び、先ほどのプロバイダーとモデルを指定して接続名を入力します。", done: "目的のプロバイダーと上流モデルが選択されています。", note: "手動設定を選んだり、接続に第三者 Key を再入力したりしないでください。" },
+    { path: "Codex ログイン → OcHub 接続エディター → アカウント", action: "まず Codex で実際の ChatGPT ログインを完了し、接続エディターで ChatGPT を選択します。", done: "Codex にログイン済みアカウントが表示され、既存の auth.json が保持されます。", note: "選択だけではログインされません。仮想ログインを有効にせず、ID Token も変更しません。" },
+    { path: "接続エディター → コンテキスト管理", action: "自動から有効に変更します。プロバイダーのモデル能力で既知のコンテキスト長を入力し、実際に対応する能力だけを宣言します。", done: "プレビューに Token Budget enabled = true と use_history_notes_extension = true が表示されます。", note: "Codex の検証待ちはサーバー検証の成功ではありません。Responses Lite は必須ではありません。" },
+    { path: "接続エディター → 設定確認 → 保存して有効化", action: "対象 Codex、プロバイダー、モデル、ローカル接続ルートを確認し、保存して有効化します。Codex を終了して開き直します。", done: "接続が現在の接続になり、新しい Codex セッションで使われます。", note: "保存だけでは下書きです。設定確認は推論も上流 History / Notes の検証も行いません。" },
+    { path: "新しい Codex セッション → 使用量 / リクエストログ → 配信ログ", action: "短い質問を送り、モデル、プロバイダー、応答を確認します。Codex が履歴やノートを実際に使ったら、alpha/history/v2 または alpha/notes/v2 のリクエストと結果を確認します。", done: "推論と実際の履歴 / ノート呼び出しが成功して初めて、全機能を確認できます。", note: "返信や圧縮の成功だけでは不十分です。401 は Key、404 は API 対応、チャネルエラーは単一 Responses チャネルを確認します。Key やプロバイダー変更後は新規セッションを開始します。" },
+  ],
+} as const;

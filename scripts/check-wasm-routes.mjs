@@ -50,6 +50,16 @@ const htmlFiles = await listHtml(distRoot);
 // a documentation migration. Check this required guide in every language.
 for (const prefix of ["", "zh/", "ja/"]) {
   const guide = await readFile(path.join(distRoot, prefix, "codex/configure/index.html"), "utf8");
+  for (let step = 1; step <= 6; step++) {
+    if (!guide.includes(`scene=codex-guide-${step}&`)) {
+      console.error(`Missing Codex tutorial step ${step}: /${prefix}codex/configure/`);
+      process.exitCode = 1;
+    }
+  }
+  if (guide.includes('class="wasm-scene-open"')) {
+    console.error(`Obsolete live-view action: /${prefix}codex/configure/`);
+    process.exitCode = 1;
+  }
   if (!/<iframe\b[^>]*src="[^\"]*\/wasm\/index\.html\?[^\"]*app=Codex/.test(guide)) {
     console.error(`Missing Codex WASM walkthrough: /${prefix}codex/configure/`);
     process.exitCode = 1;

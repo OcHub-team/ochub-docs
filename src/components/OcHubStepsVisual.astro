@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import OcHubStepScreen from "./OcHubStepScreen.astro";
+import { codexGuide } from "./codex-guide";
 
 type Locale = "en" | "zh" | "ja";
 
@@ -338,6 +339,7 @@ const guideAliases: Record<string, string> = {
 };
 
 const guideFor = (visual: string): Guide =>
+  (visual.startsWith("codex-guide-") ? codexGuide[locale][Number(visual.split("-").at(-1)) - 1] : undefined) ??
   guides[locale][visual] ??
   guides[locale][guideAliases[visual]] ??
   guides[locale].result ??

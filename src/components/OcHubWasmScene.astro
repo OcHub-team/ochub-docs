@@ -32,14 +32,14 @@ if (endpoint) query.set("endpoint", endpoint);
 // as a content route and returns the documentation 404 page instead.
 const src = `/wasm/index.html?${query.toString()}`;
 const copy = {
-  en: { runtime: "WebGPU renderer", open: "Open live view" },
-  zh: { runtime: "WebGPU 渲染器", open: "打开实时界面" },
-  ja: { runtime: "WebGPU レンダラー", open: "ライブ画面を開く" },
+  en: { runtime: "Loading illustration", illustration: "Illustration · follow the steps in OcHub" },
+  zh: { runtime: "正在加载示意图", illustration: "界面示意 · 请在 OcHub 中按步骤操作" },
+  ja: { runtime: "図を読み込み中", illustration: "画面例 · 操作は OcHub で行ってください" },
 } as const;
 const t = copy[locale];
 ---
 
-<div class:list={["wasm-scene", { "is-compact": compact }]} data-wasm-scene>
+<div class:list={["wasm-scene", { "is-compact": compact, "is-tutorial": scene.startsWith("codex-guide-") }]} style={`--tutorial-height: ${["codex-guide-1", "codex-guide-6"].includes(scene) ? "28rem" : "23rem"}`} data-wasm-scene>
   <div class="wasm-scene-loading" aria-hidden="true">
     <span></span>
     <div>
@@ -52,13 +52,12 @@ const t = copy[locale];
     title={title}
     loading="lazy"
     allow="webgpu"
+    tabindex={scene.startsWith("codex-guide-") ? -1 : undefined}
+    class:list={{ "is-illustration": scene.startsWith("codex-guide-") }}
     data-wasm-scene-frame
   ></iframe>
-  <a class="wasm-scene-open" href={src} target="_blank" rel="noopener">
-    <span>{t.open}</span>
-    <span aria-hidden="true">↗</span>
-  </a>
 </div>
+{scene.startsWith("codex-guide-") && <p class="illustration-label">{t.illustration}</p>}
 
 <script>
   const bindWasmScenes = () => {
@@ -99,6 +98,8 @@ const t = copy[locale];
     transition: opacity 220ms cubic-bezier(.25, 1, .5, 1);
   }
   .is-compact iframe { height: clamp(24rem, 58vw, 34rem); }
+  .wasm-scene.is-tutorial { min-height: var(--tutorial-height); }
+  .is-tutorial iframe { height: var(--tutorial-height); }
   [data-loaded="true"] iframe { opacity: 1; }
   .wasm-scene-loading {
     position: absolute;
@@ -123,34 +124,11 @@ const t = copy[locale];
   .wasm-scene-loading div { display: flex; flex-direction: column; }
   .wasm-scene-loading strong { color: var(--nb-foreground); font-family: var(--nb-font-mono); font-size: .72rem; letter-spacing: .08em; }
   .wasm-scene-loading small { font-size: .72rem; }
-  .wasm-scene-open {
-    position: absolute;
-    right: .75rem;
-    bottom: .75rem;
-    display: inline-flex;
-    min-height: 2.25rem;
-    align-items: center;
-    gap: .45rem;
-    padding: .4rem .7rem;
-    border: 1px solid var(--nb-border-strong);
-    border-radius: .45rem;
-    background: var(--nb-card);
-    color: var(--nb-foreground);
-    font-size: .72rem;
-    font-weight: 650;
-    text-decoration: none;
-    opacity: 0;
-    transform: translateY(.25rem);
-    transition: opacity 180ms cubic-bezier(.25, 1, .5, 1), transform 180ms cubic-bezier(.25, 1, .5, 1);
-  }
-  .wasm-scene:hover .wasm-scene-open,
-  .wasm-scene-open:focus-visible { opacity: 1; transform: none; }
+  iframe.is-illustration { pointer-events: none; }
+  .illustration-label { margin: .5rem 0; color: var(--nb-muted-foreground); font-size: .75rem; }
   @keyframes scene-spin { to { transform: rotate(360deg); } }
-  @media (max-width: 640px), (pointer: coarse) {
-    .wasm-scene-open { opacity: 1; transform: none; }
-  }
   @media (prefers-reduced-motion: reduce) {
-    iframe, .wasm-scene-loading, .wasm-scene-open { transition: none; }
+    iframe, .wasm-scene-loading { transition: none; }
     .wasm-scene-loading span { animation-duration: 1.8s; }
   }
 </style>
