@@ -45,6 +45,16 @@ if (wasmFiles.length !== 1) {
 }
 
 const htmlFiles = await listHtml(distRoot);
+
+// A site-wide count did not catch the Codex walkthrough being removed during
+// a documentation migration. Check this required guide in every language.
+for (const prefix of ["", "zh/", "ja/"]) {
+  const guide = await readFile(path.join(distRoot, prefix, "codex/configure/index.html"), "utf8");
+  if (!/<iframe\b[^>]*src="[^\"]*\/wasm\/index\.html\?[^\"]*app=Codex/.test(guide)) {
+    console.error(`Missing Codex WASM walkthrough: /${prefix}codex/configure/`);
+    process.exitCode = 1;
+  }
+}
 const failures = [];
 let explicitWasmRoutes = 0;
 

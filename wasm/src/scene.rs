@@ -38,13 +38,19 @@ impl SceneConfig {
                 .find_map(|(key, value)| (key == name).then(|| value.clone()))
                 .unwrap_or_else(|| fallback.to_string())
         };
+        let app = get("app", "Claude Code");
+        let default_endpoint = match app.as_str() {
+            "Codex" => "http://127.0.0.1:4180/connection/rd-example/backend-api/codex",
+            "Grok Build" => "https://api.x.ai/v1",
+            _ => "https://api.example.com/claude",
+        };
         Self {
             scene: get("scene", "connections"),
             locale: get("locale", "en"),
-            app: get("app", "Claude Code"),
+            app,
             current_name: get("currentName", "Official account"),
             connection_name: get("connectionName", "Example API"),
-            endpoint: get("endpoint", "https://api.example.com/claude"),
+            endpoint: get("endpoint", default_endpoint),
         }
     }
 }
@@ -336,7 +342,11 @@ impl SceneView {
                 app_item(
                     "app-claude-code",
                     &self.config.app,
-                    IconName::AgentClaudeCode,
+                    match self.config.app.as_str() {
+                        "Grok Build" => IconName::AgentGrokBuild,
+                        "Codex" => IconName::AgentCodex,
+                        _ => IconName::AgentClaudeCode,
+                    },
                     0xd97757,
                     app_selected,
                     &["sidebar-app"],
@@ -605,7 +615,7 @@ impl SceneView {
             match self.config.locale.split(['-', '_']).next() {
                 Some("zh") => (
                     "编辑连接",
-                    "目标应用：Claude Code",
+                    "目标应用：",
                     "来源",
                     "网站 URL",
                     "分类",
@@ -615,7 +625,7 @@ impl SceneView {
                 ),
                 Some("ja") => (
                     "接続を編集",
-                    "対象アプリ：Claude Code",
+                    "対象アプリ：",
                     "ソース",
                     "Web サイト URL",
                     "カテゴリ",
@@ -625,7 +635,7 @@ impl SceneView {
                 ),
                 _ => (
                     "Edit connection",
-                    "Target app: Claude Code",
+                    "Target app: ",
                     "Source",
                     "Website URL",
                     "Category",
@@ -662,10 +672,29 @@ impl SceneView {
                     components::segmented_readonly(
                         "provider-source",
                         &[copy.direct, copy.providers],
-                        0,
+                        usize::from(self.config.app == "Codex"),
                     ),
                 ),
             ))
+            .when(self.config.app == "Codex", |form| {
+                let (account, context, enabled) = match self.config.locale.as_str() {
+                    "zh" => ("账号", "上下文管理", "开启"),
+                    "ja" => ("アカウント", "コンテキスト管理", "有効"),
+                    _ => ("Account", "Context management", "On"),
+                };
+                form.child(components::field(
+                    account,
+                    false,
+                    None,
+                    control("ChatGPT".into(), false),
+                ))
+                .child(components::field(
+                    context,
+                    false,
+                    None,
+                    control(enabled.into(), false),
+                ))
+            })
             .child(self.targeted(
                 &["identity"],
                 components::field(
@@ -675,44 +704,67 @@ impl SceneView {
                     control(self.config.current_name.clone(), false),
                 ),
             ))
-            .child(components::field(
-                website,
-                false,
-                None,
-                control("https://www.anthropic.com/claude-code".into(), false),
-            ))
-            .child(components::field(
-                category,
-                false,
-                None,
-                control("official".into(), false),
-            ))
-            .child(components::field(
-                notes,
-                false,
-                None,
-                control("Personal account".into(), true),
-            ))
-            .child(layout::section_header("Endpoint and authentication", None))
-            .child(self.targeted(
-                &["fields"],
-                components::field(
-                    copy.base_url,
+            .when(self.config.app != "Codex", |form| {
+                form.child(components::field(
+                    website,
+                    false,
+                    None,
+                    control(
+                        match self.config.app.as_str() {
+                            "Codex" => "https://chatgpt.com/codex",
+                            "Grok Build" => "https://x.ai",
+                            _ => "https://www.anthropic.com/claude-code",
+                        }
+                        .into(),
+                        false,
+                    ),
+                ))
+                .child(components::field(
+                    category,
+                    false,
+                    None,
+                    control("official".into(), false),
+                ))
+                .child(components::field(
+                    notes,
+                    false,
+                    None,
+                    control("Personal account".into(), true),
+                ))
+            })
+            .when(self.config.app != "Codex", |form| {
+                form.child(layout::section_header(
+                    match self.config.locale.as_str() {
+                        "zh" => "端点与鉴权",
+                        "ja" => "エンドポイントと認証",
+                        _ => "Endpoint and authentication",
+                    },
+                    None,
+                ))
+                .child(self.targeted(
+                    &["fields"],
+                    components::field(
+                        copy.base_url,
+                        true,
+                        None,
+                        control(self.config.endpoint.clone(), false),
+                    ),
+                ))
+                .child(components::field(
+                    copy.api_key,
                     true,
                     None,
-                    control(self.config.endpoint.clone(), false),
-                ),
-            ))
-            .child(components::field(
-                copy.api_key,
-                true,
-                None,
-                control("••••••••••••••••".into(), false),
-            ))
+                    control("••••••••••••••••".into(), false),
+                ))
+            })
             .child(self.targeted(
                 &["model"],
                 components::field(
-                    "Default model",
+                    match self.config.locale.as_str() {
+                        "zh" => "默认模型",
+                        "ja" => "デフォルトモデル",
+                        _ => "Default model",
+                    },
                     false,
                     None,
                     control(sample_model(&self.config.app).into(), false),
@@ -755,14 +807,16 @@ impl SceneView {
             Some(
                 self.targeted(
                     &["preview"],
-                    editor_screen::preview_summary_card(editor_screen::preview_summary(
-                        editor_screen::PreviewSummary {
-                            title: SharedString::from(copy.files),
-                            files: SharedString::from("~/.claude/settings.json"),
-                            errors: None,
-                            warnings: None,
-                        },
-                    )),
+                    components::card()
+                        .p_3()
+                        .child(div().child(copy.files))
+                        .child(div().font_family("Lilex").text_xs().child(
+                            match self.config.app.as_str() {
+                                "Codex" => "~/.codex/config.toml",
+                                "Grok Build" => "~/.grok/",
+                                _ => "~/.claude/settings.json",
+                            },
+                        )),
                 )
                 .into_any_element(),
             )
@@ -785,9 +839,13 @@ impl SceneView {
                     .child(
                         div()
                             .p_4()
-                            .font_family("Menlo")
+                            .font_family("Lilex")
                             .text_xs()
-                            .child("{\n  \"env\": { ... }\n}"),
+                            .child(match self.config.app.as_str() {
+                                "Codex" => "[features.token_budget]\nenabled = true\nuse_history_notes_extension = true",
+                                "Grok Build" => "API backend: OpenAI Responses\nModel: grok-4.5",
+                                _ => "{\n  \"env\": { ... }\n}",
+                            }),
                     )
                     .into_any_element(),
             )
@@ -799,12 +857,14 @@ impl SceneView {
             .items_center()
             .justify_end()
             .gap_2()
-            .child(components::button(
-                "editor-convert",
-                copy_to_app,
-                ButtonTone::Neutral,
-                ButtonSize::Md,
-            ))
+            .when(window_width >= 600., |actions| {
+                actions.child(components::button(
+                    "editor-convert",
+                    copy_to_app,
+                    ButtonTone::Neutral,
+                    ButtonSize::Md,
+                ))
+            })
             .child(self.targeted(
                 &["save"],
                 components::button(
@@ -814,15 +874,17 @@ impl SceneView {
                     ButtonSize::Md,
                 ),
             ))
-            .child(components::button(
-                "editor-cancel",
-                cancel,
-                ButtonTone::Neutral,
-                ButtonSize::Md,
-            ));
+            .when(window_width >= 600., |actions| {
+                actions.child(components::button(
+                    "editor-cancel",
+                    cancel,
+                    ButtonTone::Neutral,
+                    ButtonSize::Md,
+                ))
+            });
         editor_screen::provider_editor_page(editor_screen::ProviderEditorPage {
             title: SharedString::from(title),
-            subtitle: SharedString::from(subtitle),
+            subtitle: SharedString::from(format!("{subtitle}{}", self.config.app)),
             actions: actions.into_any_element(),
             form_scroll,
             preview,
@@ -1156,17 +1218,26 @@ impl SceneView {
                                     ),
                             ),
                         )
-                        .child(self.targeted(
-                            &["pricing", "pricing-save"],
-                            components::card().flex_row().items_center().justify_between().child(
-                                div().font_weight(FontWeight::SEMIBOLD).child("Model pricing"),
-                            ).child(components::button(
-                                "usage-pricing-toggle",
-                                copy.edit,
-                                ButtonTone::Neutral,
-                                ButtonSize::Sm,
-                            )),
-                        )),
+                        .child(
+                            self.targeted(
+                                &["pricing", "pricing-save"],
+                                components::card()
+                                    .flex_row()
+                                    .items_center()
+                                    .justify_between()
+                                    .child(
+                                        div()
+                                            .font_weight(FontWeight::SEMIBOLD)
+                                            .child("Model pricing"),
+                                    )
+                                    .child(components::button(
+                                        "usage-pricing-toggle",
+                                        copy.edit,
+                                        ButtonTone::Neutral,
+                                        ButtonSize::Sm,
+                                    )),
+                            ),
+                        ),
                 ),
         )
     }
@@ -1468,10 +1539,17 @@ impl Render for SceneView {
             Page::Theme => self.theme_page(copy),
             Page::Sync => self.sync_page(copy),
         };
-        shell::app_root().child(shell::app_body(
-            self.sidebar(page, copy, appearance),
-            content,
-        ))
+        // Web cannot resolve desktop system fonts. Use the font bundled by GPUI
+        // Web, retaining the registered Noto CJK fallback for Chinese/Japanese.
+        let sidebar = div().when(window_width >= 1000., |sidebar| {
+            sidebar.child(self.sidebar(page, copy, appearance))
+        });
+        shell::app_root()
+            // Browsers have no native vibrancy backdrop. Composite translucent
+            // surfaces over the theme background rather than the dark HTML boot.
+            .bg(theme::current().bg.rgba())
+            .font_family("IBM Plex Sans")
+            .child(shell::app_body(sidebar, content))
     }
 }
 
