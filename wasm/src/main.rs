@@ -1,5 +1,6 @@
 #![cfg_attr(target_family = "wasm", no_main)]
 
+mod product_ui;
 mod scene;
 
 use std::borrow::Cow;
@@ -47,7 +48,7 @@ pub fn start() {
                 WindowOptions {
                     window_bounds: Some(WindowBounds::Windowed(Bounds::centered(
                         None,
-                        size(px(1100.), px(720.)),
+                        size(px(1280.), px(800.)),
                         cx,
                     ))),
                     window_min_size: Some(size(px(320.), px(360.))),

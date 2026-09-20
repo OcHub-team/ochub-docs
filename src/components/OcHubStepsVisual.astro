@@ -76,7 +76,7 @@ const copy = {
     done: "Done when",
     note: "Watch for",
     preview: "Generated preview",
-    caption: "Follow each screen in order. The blue outline marks the exact control or result.",
+    caption: "Click a screen to enlarge it, then use ← → to walk the steps. The blue outline marks the control or result.",
   },
   zh: {
     figure: "逐步界面示意",
@@ -125,7 +125,7 @@ const copy = {
     done: "完成标志",
     note: "注意",
     preview: "生成预览",
-    caption: "按顺序对照操作；蓝色描边表示当前步骤需要操作或确认的区域。",
+    caption: "点击画面放大，左右方向键切换步骤；蓝色描边是当前要对照的位置。",
   },
   ja: {
     figure: "手順ごとの画面",
@@ -174,7 +174,7 @@ const copy = {
     done: "完了の目安",
     note: "注意",
     preview: "生成プレビュー",
-    caption: "順番に画面を確認してください。青い枠が操作または確認する場所です。",
+    caption: "画面をクリックして拡大し、← → で手順を切り替えます。青い枠が操作位置です。",
   },
 } satisfies Record<Locale, Record<string, string>>;
 
@@ -346,7 +346,7 @@ const guideFor = (visual: string): Guide =>
   guides.en.result;
 ---
 
-<figure class="steps-visual" aria-label={t.figure}>
+<figure class="steps-visual" aria-label={t.figure} data-wasm-gallery data-locale={locale}>
   <div class="steps-heading">
     <Icon name="ph:cursor-click" />
     <strong>{t.figure}</strong>
@@ -358,7 +358,15 @@ const guideFor = (visual: string): Guide =>
       const visual = stepVisuals[index];
       const guide = guideFor(visual);
       return (
-        <section class="step-panel">
+        <section
+          class="step-panel"
+          data-wasm-gallery-item
+          data-step-label={label}
+          data-step-path={guide.path}
+          data-step-action={guide.action}
+          data-step-done={guide.done}
+          data-step-note={guide.note ?? ""}
+        >
           <header>
             <span>{index + 1}</span>
             <div>
@@ -403,7 +411,7 @@ const guideFor = (visual: string): Guide =>
 
 <style>
   .steps-visual {
-    width: min(50rem, calc(100cqw - 3rem));
+    width: min(64rem, calc(100cqw - 2rem));
     margin: 1.5rem 0 2rem 50%;
     padding: 1rem;
     color: var(--nb-foreground);

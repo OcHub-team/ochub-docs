@@ -41,16 +41,18 @@ const titles = {
 } as const;
 ---
 
-<figure class="ochub-wasm-figure">
-  <OcHubWasmScene
-    scene={screen}
-    locale={locale}
-    app={app}
-    currentName={currentName}
-    connectionName={connectionName}
-    endpoint={endpoint}
-    title={titles[locale][screen]}
-  />
+<figure class="ochub-wasm-figure" data-wasm-gallery data-locale={locale}>
+  <div data-wasm-gallery-item data-step-label={titles[locale][screen]}>
+    <OcHubWasmScene
+      scene={screen}
+      locale={locale}
+      app={app}
+      currentName={currentName}
+      connectionName={connectionName}
+      endpoint={endpoint}
+      title={titles[locale][screen]}
+    />
+  </div>
   <figcaption>
     <span aria-hidden="true"></span>
     {titles[locale][screen]}

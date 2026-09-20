@@ -32,14 +32,41 @@ if (endpoint) query.set("endpoint", endpoint);
 // as a content route and returns the documentation 404 page instead.
 const src = `/wasm/index.html?${query.toString()}`;
 const copy = {
-  en: { runtime: "Loading illustration", illustration: "Illustration · follow the steps in OcHub" },
-  zh: { runtime: "正在加载示意图", illustration: "界面示意 · 请在 OcHub 中按步骤操作" },
-  ja: { runtime: "図を読み込み中", illustration: "画面例 · 操作は OcHub で行ってください" },
+  en: {
+    runtime: "Loading illustration",
+    illustration: "Illustration · follow the steps in OcHub",
+    enlarge: "Enlarge",
+  },
+  zh: {
+    runtime: "正在加载示意图",
+    illustration: "界面示意 · 请在 OcHub 中按步骤操作",
+    enlarge: "放大查看",
+  },
+  ja: {
+    runtime: "図を読み込み中",
+    illustration: "画面例 · 操作は OcHub で行ってください",
+    enlarge: "拡大表示",
+  },
 } as const;
 const t = copy[locale];
+// Codex cards are self-contained illustrations. Every other scene is a
+// miniature of the desktop OcHub window, so the iframe keeps a desktop
+// viewport and the host only scales it down to the figure.
+const isIllustration = scene.startsWith("codex-guide-");
+const desktop = !isIllustration;
+const DESKTOP_SCENE_WIDTH = 1280;
+const DESKTOP_SCENE_HEIGHT = 800;
+const sceneStyle = isIllustration
+  ? `--tutorial-height: ${["codex-guide-1", "codex-guide-6"].includes(scene) ? "28rem" : "23rem"}`
+  : `--scene-width: ${DESKTOP_SCENE_WIDTH}; --scene-height: ${DESKTOP_SCENE_HEIGHT}`;
 ---
 
-<div class:list={["wasm-scene", { "is-compact": compact, "is-tutorial": scene.startsWith("codex-guide-") }]} style={`--tutorial-height: ${["codex-guide-1", "codex-guide-6"].includes(scene) ? "28rem" : "23rem"}`} data-wasm-scene>
+<div
+  class:list={["wasm-scene", { "is-compact": compact, "is-tutorial": isIllustration, "is-desktop": desktop }]}
+  style={sceneStyle}
+  data-wasm-scene
+  data-locale={locale}
+>
   <div class="wasm-scene-loading" aria-hidden="true">
     <span></span>
     <div>
@@ -52,54 +79,79 @@ const t = copy[locale];
     title={title}
     loading="lazy"
     allow="webgpu"
-    tabindex={scene.startsWith("codex-guide-") ? -1 : undefined}
-    class:list={{ "is-illustration": scene.startsWith("codex-guide-") }}
+    width={desktop ? DESKTOP_SCENE_WIDTH : undefined}
+    height={desktop ? DESKTOP_SCENE_HEIGHT : undefined}
+    tabindex={isIllustration ? -1 : undefined}
+    class:list={{ "is-illustration": isIllustration }}
     data-wasm-scene-frame
   ></iframe>
+  <button type="button" class="wasm-zoom" data-wasm-zoom aria-label={t.enlarge}>
+    <span class="wasm-zoom-chip">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M5 19v-5h1.5v3.5H10V19zm9 0v-1.5h3.5V14H19v5zM5 10V5h5v1.5H6.5V10zm12.5 0V6.5H14V5h5v5z"
+        ></path>
+      </svg>
+      {t.enlarge}
+    </span>
+  </button>
 </div>
 {scene.startsWith("codex-guide-") && <p class="illustration-label">{t.illustration}</p>}
 
 <script>
-  const bindWasmScenes = () => {
-    document.querySelectorAll<HTMLElement>("[data-wasm-scene]").forEach((scene) => {
-      if (scene.dataset.bound === "true") return;
-      scene.dataset.bound = "true";
-      const frame = scene.querySelector<HTMLIFrameElement>("[data-wasm-scene-frame]");
-      frame?.addEventListener("load", () => scene.setAttribute("data-loaded", "true"), { once: true });
-    });
-  };
-  bindWasmScenes();
-  document.addEventListener("astro:page-load", bindWasmScenes);
+  import "./wasm-lightbox.client";
 </script>
 
 <style>
   .wasm-scene {
     position: relative;
     width: 100%;
-    min-height: clamp(30rem, 66vw, 44rem);
     overflow: hidden;
     border: 1px solid var(--nb-border-strong);
     border-radius: .75rem;
     background: var(--nb-muted);
     box-shadow: var(--nb-shadow-lg);
   }
-  .wasm-scene.is-compact {
+  .wasm-scene:not(.is-desktop) { min-height: clamp(30rem, 66vw, 44rem); }
+  .wasm-scene.is-compact:not(.is-desktop) {
     min-height: clamp(24rem, 58vw, 34rem);
     border-radius: .55rem;
     box-shadow: var(--nb-shadow);
   }
+  .wasm-scene.is-compact.is-desktop {
+    border-radius: .55rem;
+    box-shadow: var(--nb-shadow);
+  }
+  .wasm-scene.is-tutorial:not(.is-desktop) { min-height: var(--tutorial-height); }
+  .wasm-scene.is-desktop {
+    aspect-ratio: var(--scene-width) / var(--scene-height);
+    height: auto;
+    min-height: 0;
+    container-type: size;
+  }
   iframe {
     display: block;
-    width: 100%;
-    height: clamp(30rem, 66vw, 44rem);
     border: 0;
     background: #151613;
     opacity: 0;
     transition: opacity 220ms cubic-bezier(.25, 1, .5, 1);
   }
-  .is-compact iframe { height: clamp(24rem, 58vw, 34rem); }
-  .wasm-scene.is-tutorial { min-height: var(--tutorial-height); }
-  .is-tutorial iframe { height: var(--tutorial-height); }
+  .wasm-scene:not(.is-desktop) iframe {
+    width: 100%;
+    height: clamp(30rem, 66vw, 44rem);
+  }
+  .wasm-scene.is-compact:not(.is-desktop) iframe { height: clamp(24rem, 58vw, 34rem); }
+  .wasm-scene.is-tutorial:not(.is-desktop) iframe { height: var(--tutorial-height); }
+  .wasm-scene.is-desktop iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--scene-width) * 1px);
+    height: calc(var(--scene-height) * 1px);
+    transform-origin: 0 0;
+    transform: scale(min(1, calc(100cqw / (var(--scene-width) * 1px)), calc(100cqh / (var(--scene-height) * 1px))));
+  }
   [data-loaded="true"] iframe { opacity: 1; }
   .wasm-scene-loading {
     position: absolute;
@@ -126,9 +178,206 @@ const t = copy[locale];
   .wasm-scene-loading small { font-size: .72rem; }
   iframe.is-illustration { pointer-events: none; }
   .illustration-label { margin: .5rem 0; color: var(--nb-muted-foreground); font-size: .75rem; }
+  .wasm-zoom {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+    color: inherit;
+  }
+  .wasm-zoom-chip {
+    position: absolute;
+    top: .55rem;
+    right: .55rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .28rem;
+    padding: .28rem .55rem;
+    color: var(--nb-foreground);
+    background: color-mix(in srgb, var(--nb-card) 88%, transparent);
+    border: 1px solid var(--nb-border-strong);
+    border-radius: 999px;
+    box-shadow: var(--nb-shadow);
+    font-size: .68rem;
+    font-weight: 650;
+    letter-spacing: .01em;
+    backdrop-filter: blur(8px);
+    opacity: .88;
+    transition: opacity 160ms cubic-bezier(.25, 1, .5, 1), background 160ms cubic-bezier(.25, 1, .5, 1);
+  }
+  .wasm-zoom-chip svg {
+    width: .85rem;
+    height: .85rem;
+  }
+  .wasm-zoom:hover .wasm-zoom-chip,
+  .wasm-zoom:focus-visible .wasm-zoom-chip {
+    opacity: 1;
+    background: var(--nb-card);
+  }
+  .wasm-zoom:focus-visible {
+    outline: 2px solid var(--nb-primary);
+    outline-offset: -2px;
+  }
+  .wasm-scene.is-lightbox {
+    position: fixed;
+    z-index: 80;
+    top: 46%;
+    left: 50%;
+    width: min(92vw, calc((100vh - 11rem) * 1.6), 1280px);
+    max-height: calc(100vh - 10.5rem);
+    height: auto;
+    margin: 0;
+    overflow: hidden;
+    border-radius: .85rem;
+    box-shadow: 0 24px 64px oklch(0.28 0.03 80 / .28), var(--nb-shadow-lg);
+    translate: -50% -50%;
+    animation: wasm-lightbox-in 220ms cubic-bezier(.25, 1, .5, 1);
+  }
+  .wasm-scene.is-lightbox .wasm-zoom { display: none; }
   @keyframes scene-spin { to { transform: rotate(360deg); } }
+  @keyframes wasm-lightbox-in {
+    from { opacity: 0; scale: .97; }
+    to { opacity: 1; scale: 1; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    iframe, .wasm-scene-loading { transition: none; }
+    iframe, .wasm-scene-loading, .wasm-zoom-chip { transition: none; }
     .wasm-scene-loading span { animation-duration: 1.8s; }
+    .wasm-scene.is-lightbox { animation: none; }
+  }
+</style>
+
+<style is:global>
+  html.wasm-lightbox-open { overflow: hidden; }
+  .wasm-lightbox-placeholder {
+    display: block;
+    width: 100%;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .wasm-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+  }
+  .wasm-lightbox[hidden] { display: none; }
+  .wasm-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+    background: color-mix(in srgb, var(--nb-foreground) 46%, transparent);
+    backdrop-filter: blur(10px);
+    animation: wasm-lightbox-fade 180ms cubic-bezier(.25, 1, .5, 1);
+  }
+  .wasm-lightbox-ui { position: absolute; inset: 0; pointer-events: none; }
+  .wasm-lightbox-close,
+  .wasm-lightbox-nav {
+    pointer-events: auto;
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    color: var(--nb-foreground);
+    background: var(--nb-card);
+    border: 1px solid var(--nb-border-strong);
+    border-radius: 999px;
+    box-shadow: var(--nb-shadow);
+    cursor: pointer;
+  }
+  .wasm-lightbox-close { top: 1rem; right: 1rem; }
+  .wasm-lightbox-nav { top: 46%; }
+  .wasm-lightbox-nav.is-prev { left: .8rem; }
+  .wasm-lightbox-nav.is-next { right: .8rem; }
+  .wasm-lightbox:not(.is-gallery) .wasm-lightbox-nav { display: none; }
+  .wasm-lightbox-close svg,
+  .wasm-lightbox-nav svg { width: 1.15rem; height: 1.15rem; }
+  .wasm-lightbox-close:hover,
+  .wasm-lightbox-nav:hover { background: var(--nb-accent); }
+  .wasm-lightbox-close:focus-visible,
+  .wasm-lightbox-nav:focus-visible {
+    outline: 2px solid var(--nb-primary);
+    outline-offset: 2px;
+  }
+  .wasm-lightbox-caption {
+    pointer-events: auto;
+    position: absolute;
+    left: 50%;
+    bottom: .85rem;
+    width: min(46rem, calc(100vw - 4.5rem));
+    padding: .7rem .9rem .65rem;
+    color: var(--nb-foreground);
+    background: var(--nb-card);
+    border: 1px solid var(--nb-border);
+    border-radius: .75rem;
+    box-shadow: var(--nb-shadow-lg);
+    transform: translateX(-50%);
+  }
+  .wasm-lightbox-caption header {
+    display: flex;
+    align-items: baseline;
+    gap: .55rem;
+    min-width: 0;
+    margin-bottom: .45rem;
+  }
+  .wasm-lightbox-caption small {
+    color: var(--nb-muted-foreground);
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .wasm-lightbox-caption strong {
+    min-width: 0;
+    font-size: .92rem;
+  }
+  .wasm-lightbox-caption dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .7rem;
+    margin: 0;
+  }
+  .wasm-lightbox-caption dl[hidden] { display: none; }
+  .wasm-lightbox-caption dt {
+    margin-bottom: .18rem;
+    color: var(--nb-primary);
+    font-size: .62rem;
+    font-weight: 750;
+  }
+  .wasm-lightbox-caption dd {
+    margin: 0;
+    font-size: .74rem;
+    line-height: 1.5;
+  }
+  .wasm-lightbox-caption .is-note {
+    grid-column: 1 / -1;
+    padding: .45rem .55rem;
+    color: var(--nb-warning-foreground);
+    background: var(--nb-warning-muted);
+    border: 1px solid color-mix(in srgb, var(--nb-warning) 35%, var(--nb-border));
+    border-radius: .4rem;
+  }
+  .wasm-lightbox-caption .is-note dt { color: var(--nb-warning-foreground); }
+  .wasm-lightbox-hint {
+    margin: .55rem 0 0;
+    color: var(--nb-muted-foreground);
+    font-size: .68rem;
+  }
+  @keyframes wasm-lightbox-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @media (max-width: 720px) {
+    .wasm-lightbox-caption dl { grid-template-columns: 1fr; }
+    .wasm-lightbox-nav { top: auto; bottom: 7.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wasm-lightbox-backdrop { animation: none; }
   }
 </style>

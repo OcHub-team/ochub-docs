@@ -1,14 +1,14 @@
+use crate::product_ui::{
+    common as common_screen, gateway as gateway_screen, provider_editor as editor_screen,
+    providers as provider_screens, settings as settings_screen, shell, themes as theme_screen,
+    tools as tool_screens, usage as usage_screen,
+};
 use ochub_ui::components::{self, BadgeTone, ButtonSize, ButtonTone};
 use ochub_ui::gpui::{
     Context, FontWeight, IntoElement, ParentElement, Render, SharedString, Styled, Window, div,
     prelude::*, px,
 };
 use ochub_ui::icons::{self, IconName};
-use ochub_ui::screens::{
-    common as common_screen, gateway as gateway_screen, provider_editor as editor_screen,
-    providers as provider_screens, settings as settings_screen, shell, themes as theme_screen,
-    tools as tool_screens, usage as usage_screen,
-};
 use ochub_ui::{layout, theme};
 
 #[derive(Clone)]
@@ -1629,17 +1629,23 @@ impl Render for SceneView {
     fn render(&mut self, window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         let page = self.page();
         let copy = Copy::for_locale(&self.config.locale);
-        // GPUI's WebGPU canvas uses device pixels, while the desktop editor's
-        // responsive thresholds are expressed in logical window pixels. Read
-        // the browser viewport directly so Retina backing dimensions cannot
-        // incorrectly force the split layout.
-        let window_width = web_sys::window()
+        // Docs figures host a scaled 1280×800 desktop window. Read CSS pixels
+        // so Retina backing sizes cannot double the breakpoints, then floor
+        // at the desktop width so a first-frame or unscaled iframe cannot
+        // collapse the tutorial into the compact editor.
+        let is_illustration = self.config.scene.starts_with("codex-guide-");
+        let measured_width = web_sys::window()
             .and_then(|browser| browser.inner_width().ok())
             .and_then(|width| width.as_f64())
             .map(|width| width as f32)
             .unwrap_or_else(|| window.viewport_size().width.into());
+        let window_width = if is_illustration {
+            measured_width
+        } else {
+            measured_width.max(DESKTOP_SCENE_WIDTH)
+        };
         let appearance = window.appearance();
-        let content = if self.config.scene.starts_with("codex-guide-") {
+        let content = if is_illustration {
             self.codex_guide()
         } else {
             match page {
@@ -1655,10 +1661,9 @@ impl Render for SceneView {
         };
         // Web cannot resolve desktop system fonts. Use the font bundled by GPUI
         // Web, retaining the registered Noto CJK fallback for Chinese/Japanese.
-        let sidebar = div().when(
-            window_width >= 1000. && !self.config.scene.starts_with("codex-guide-"),
-            |sidebar| sidebar.child(self.sidebar(page, copy, appearance)),
-        );
+        let sidebar = div().when(!is_illustration, |sidebar| {
+            sidebar.child(self.sidebar(page, copy, appearance))
+        });
         shell::app_root()
             // Browsers have no native vibrancy backdrop. Composite translucent
             // surfaces over the theme background rather than the dark HTML boot.
@@ -1667,6 +1672,10 @@ impl Render for SceneView {
             .child(shell::app_body(sidebar, content))
     }
 }
+
+/// Logical size of the documentation desktop window. Must stay in sync with
+/// the iframe viewport in `OcHubWasmScene.astro`.
+const DESKTOP_SCENE_WIDTH: f32 = 1280.;
 
 fn sample_model(app: &str) -> &'static str {
     match app {
