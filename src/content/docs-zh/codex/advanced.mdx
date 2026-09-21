@@ -41,15 +41,16 @@ Provider ID 应使用短、稳定、无空格的值。更换上游地址、模�
 1. **先完成 ChatGPT 登录。** 在 Codex 中登录，确认账号连接能单独工作。登录凭据可能保存在
    `~/.codex/auth.json`，也可能由系统钥匙串保存。
 
-2. **让 OcHub 保留登录材料。** 打开 Codex 应用设置，启用“第三方连接保留当前 OAuth”。
+2. **把登录状态保存为连接版本。** 保持官方连接为当前连接并切换到其他连接；OcHub 显示
+   `auth.json` 和 `config.toml` 差异时，选择“保存为新版”。
 
 3. **新建 Codex 连接并选择“模型供应商”。** 选择已经配置好的模型供应商与客户端模型。
 
 4. **设置稳定的 Provider ID。** 例如 `company_proxy`。这是聊天记录分桶，不是 OcHub 的
    内部连接 ID。
 
-5. **选择“ChatGPT 登录 + 第三方 API”。** OcHub 保留登录状态，同时给本地网关写入独立的
-   客户端密钥。
+5. **选择“ChatGPT 登录 + 第三方 API”。** OcHub 会把登录材料纳入这个连接版本，同时给
+   本地网关写入独立的客户端密钥。
 
 6. **检查预览。** `model_provider` 应是你选择的稳定 ID；`base_url` 应指向 OcHub 本地网关；
    Provider 中应同时保留 OpenAI 登录要求和网关 bearer token。

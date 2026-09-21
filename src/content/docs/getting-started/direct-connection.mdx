@@ -93,17 +93,17 @@ the new connection and its card is marked Current.
 
 ## Handle external edits
 
-If another program changes the live configuration after OcHub last read it, a
-**Configuration file was modified externally** dialog appears during the next
-switch:
+If another program changes the active connection files, OcHub shows a
+side-by-side diff during the next switch:
 
-- **Keep my changes** attempts to merge external edits and lists fields that
-  cannot be preserved safely.
-- **Discard my changes** uses OcHub's pending preview as the source of truth.
-- **Cancel** leaves the file untouched so you can back it up and compare it.
+- **Save as new version** stores the current files in the active connection,
+  then switches. Returning to it later restores this version.
+- **Revert to saved** discards the current file edits, restores the saved
+  version, then switches.
+- **Cancel** changes neither the live files nor the saved connection.
 
-Choose Cancel when you are unsure. Copy the original file before attempting the
-switch again.
+For Codex, the dialog compares `auth.json` and `config.toml` separately and also
+includes malformed `auth.json` text.
 
 ## Roll back
 

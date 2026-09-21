@@ -17,7 +17,7 @@ Choose **Official**, **Model provider**, or **Manual configuration** as the mode
 
 A provider connection keeps upstream credentials in the supplier. Manual connections use the address and API key entered in the connection. Keeping ChatGPT login alongside an independent API key does not qualify for experimental context management.
 
-**Save** stores a Codex draft without rewriting the live connection files. **Save and activate** saves, then switches while preserving external configuration edits. **Check configuration** checks local configuration requirements only; it sends no inference request and does not verify subscriptions or backend capabilities. Remote workspaces require an updated node supporting draft operations.
+**Save** stores a Codex draft without rewriting the live connection files. **Save and activate** saves the draft and switches to it. If the currently active connection changed on disk, OcHub first shows the same version diff and asks whether to save or revert those live edits. **Check configuration** checks local configuration requirements only; it sends no inference request and does not verify subscriptions or backend capabilities. Remote workspaces require an updated node supporting draft operations.
 
 Virtual login is under **Advanced** for compatibility with clients without a real account. It grants no subscription or official quota and cannot replace real credentials.
 

@@ -53,9 +53,9 @@ tool's own login state. Use it when:
   service.
 - You want to preserve native subscription and account features.
 
-When **Keep current OAuth for third parties** is enabled for Codex,
-switching to a third-party connection does not overwrite `auth.json`. This setting
-is specific to Codex.
+For Codex, both `auth.json` and `config.toml` belong to the active connection
+version. When either file changes outside OcHub, review and save that version
+before switching away if you want to keep it.
 
 ## App-specific settings
 
@@ -64,7 +64,7 @@ Open **App settings** in the upper-right corner of an app page:
 | App | Main settings |
 | --- | --- |
 | Claude Code | Skip MCP onboarding, Claude plugin integration, custom config directory |
-| Codex | Preserve OAuth, unified history, migrate existing sessions, custom config directory |
+| Codex | Unified history, migrate existing sessions, custom config directory |
 | OpenCode | Custom config directory |
 | OpenClaw | Custom config directory |
 | Hermes | Custom config directory |
@@ -88,14 +88,21 @@ from the target CLI is the final check.
 
 ## When configuration changed externally
 
-OcHub checks for live-configuration drift before writing. If there is a
-conflict:
+OcHub treats each active connection as a saved configuration version. Before
+switching, it compares that saved version with the files currently on disk:
 
-1. Review the changes under Will preserve, Will keep deleted, and Cannot
-   preserve together.
-2. Choose **Keep my changes** when external fields are still required.
-3. Choose **Discard my changes** when the OcHub preview should replace them.
-4. If uncertain, cancel, back up the file, and compare it manually.
+1. Review the side-by-side file diff. Red shows the saved version and green
+   shows the current file.
+2. Choose **Save as new version** to store the current files in the active
+   connection, then switch. Switching back later restores this new version.
+3. Choose **Revert to saved** to discard the current on-disk edits, restore the
+   saved connection version, then switch.
+4. Choose **Cancel** to leave both OcHub and the live files unchanged.
+
+This flow applies to every switch-style app whose live configuration OcHub can
+read, including Claude Code, Codex, Grok Build, Kimi Code, and switch plugins.
+Codex shows `auth.json` and `config.toml` as separate files. Even malformed
+`auth.json` text is included and can be saved and restored exactly.
 
 Do not let OcHub, cc-switch, and a manual editor write the same file at once.
 

@@ -44,8 +44,9 @@ inference to go through a third-party Responses API or an OcHub model provider.
 1. **Sign in to ChatGPT first.** Verify that the official Codex connection works
    alone. Credentials may live in `~/.codex/auth.json` or the OS keychain.
 
-2. **Tell OcHub to preserve login material.** Enable **Keep current OAuth for
-   third parties** in Codex App settings.
+2. **Save the signed-in state as the connection version.** While the official
+   connection is current, switch away and choose **Save as new version** when
+   OcHub shows the `auth.json` and `config.toml` diff.
 
 3. **Add a Codex connection and select Model provider.** Choose an existing
    provider and the client-facing model.
@@ -53,8 +54,9 @@ inference to go through a third-party Responses API or an OcHub model provider.
 4. **Set a stable Provider ID.** Use a value such as `company_proxy`. It is the
    history bucket, not the internal OcHub connection ID.
 
-5. **Choose ChatGPT login + third-party API.** OcHub preserves the login state
-   and issues a separate client key for its local gateway.
+5. **Choose ChatGPT login + third-party API.** OcHub includes the login material
+   in this connection version and issues a separate client key for its local
+   gateway.
 
 6. **Review the preview.** `model_provider` should contain the stable ID;
    `base_url` should point to the local OcHub gateway; the provider should keep
