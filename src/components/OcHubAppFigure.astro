@@ -62,8 +62,10 @@ const titles = {
 <style>
   .ochub-wasm-figure {
     width: min(68rem, calc(100cqw - 1rem));
-    margin: 2rem 50%;
-    transform: translateX(-50%);
+    margin-block: 2rem;
+    /* Center without `transform`: a transformed ancestor becomes the
+       containing block for `position: fixed`, which trapped the lightbox. */
+    margin-inline-start: calc(50% - min(34rem, (100cqw - 1rem) / 2));
   }
   figcaption {
     display: flex;

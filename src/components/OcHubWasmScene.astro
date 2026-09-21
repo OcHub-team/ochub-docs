@@ -225,7 +225,7 @@ const sceneStyle = isIllustration
   }
   .wasm-scene.is-lightbox {
     position: fixed;
-    z-index: 80;
+    z-index: 71;
     top: 46%;
     left: 50%;
     width: min(92vw, calc((100vh - 11rem) * 1.6), 1280px);
@@ -259,22 +259,25 @@ const sceneStyle = isIllustration
     pointer-events: none;
     visibility: hidden;
   }
-  .wasm-lightbox {
+  .wasm-lightbox[hidden] { display: none; }
+  /* Backdrop, scene, and chrome are separate stacking layers so a
+     `position: fixed` scene can sit above the dimmer without covering
+     close / prev / next. Do not wrap them in one z-index context. */
+  .wasm-lightbox-backdrop {
     position: fixed;
     inset: 0;
     z-index: 70;
-    pointer-events: none;
-  }
-  .wasm-lightbox[hidden] { display: none; }
-  .wasm-lightbox-backdrop {
-    position: absolute;
-    inset: 0;
     pointer-events: auto;
     background: color-mix(in srgb, var(--nb-foreground) 46%, transparent);
     backdrop-filter: blur(10px);
     animation: wasm-lightbox-fade 180ms cubic-bezier(.25, 1, .5, 1);
   }
-  .wasm-lightbox-ui { position: absolute; inset: 0; pointer-events: none; }
+  .wasm-lightbox-ui {
+    position: fixed;
+    inset: 0;
+    z-index: 72;
+    pointer-events: none;
+  }
   .wasm-lightbox-close,
   .wasm-lightbox-nav {
     pointer-events: auto;

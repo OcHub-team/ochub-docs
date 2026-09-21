@@ -412,14 +412,14 @@ const guideFor = (visual: string): Guide =>
 <style>
   .steps-visual {
     width: min(64rem, calc(100cqw - 2rem));
-    margin: 1.5rem 0 2rem 50%;
+    margin-block: 1.5rem 2rem;
+    margin-inline-start: calc(50% - min(32rem, (100cqw - 2rem) / 2));
     padding: 1rem;
     color: var(--nb-foreground);
     background: var(--nb-card);
     border: 1px solid var(--nb-border);
     border-radius: 0.85rem;
     box-shadow: var(--nb-shadow);
-    transform: translateX(-50%);
   }
 
   .steps-heading {
@@ -582,8 +582,7 @@ const guideFor = (visual: string): Guide =>
   @media (max-width: 640px) {
     .steps-visual {
       width: 100%;
-      margin-left: 0;
-      transform: none;
+      margin-inline-start: 0;
     }
 
     .steps-heading {
