@@ -75,7 +75,7 @@ Under **Model providers → Edit → Models**, open **Model capabilities** for a
 | Remote compaction: Auto | Unverified; actual Responses requests determine availability |
 | Remote compaction: Supported | User declaration, still requiring a real request to verify |
 | Remote compaction: Unsupported | Gateway rejects this model's remote compaction requests |
-| Context window | Positive integer; blank uses catalog defaults |
+| Context window | Positive integer; blank inherits the model's own catalog entry window (128000 when the template has none) |
 
 These settings are marked **User declared · Unverified**. Fetching a model list does not verify Lite, compaction, or history services. Declarations are scoped to the supplier and upstream model; aliases use the mapped upstream model's declarations.
 
