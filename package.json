@@ -15,7 +15,7 @@
     "lint:docs:fix": "nimbus-docs lint --fix",
     "check:i18n": "node scripts/check-i18n-docs.mjs",
     "check:wasm-routes": "node scripts/check-wasm-routes.mjs",
-    "check": "pnpm lint:docs && pnpm check:i18n && pnpm typecheck && pnpm build && pnpm check:wasm-routes",
+    "check": "pnpm check:i18n && pnpm typecheck && pnpm build && pnpm lint:docs && pnpm check:wasm-routes",
     "prepreview:cf": "pnpm build",
     "preview:cf": "wrangler dev",
     "predeploy": "pnpm typecheck && pnpm build",

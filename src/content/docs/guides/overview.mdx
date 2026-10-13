@@ -31,6 +31,21 @@ can still reject credentials or fail to serve a model; HTTP 401 and 403 can coun
 as reachable. Use the existing connection or upstream diagnostics when you need
 a fresh test.
 
+## Preview how a model reaches an upstream
+
+Use **Route preview** in a route's details:
+
+1. Choose a **Caller policy**. The default inspects the route's own rules; a caller uses its dedicated model policy. An explicitly empty caller policy passes models through instead of inheriting the route fallback.
+2. Select the incoming protocol and enter the model name actually sent by the client, or choose a configured model below the field.
+3. Follow the client model, matched rule or fallback, and eligible upstreams. Each candidate shows the final upstream model, priority and weight.
+
+Expand **excluded upstreams** to check disabled entries, the route allowlist, a rule's channel or protocol binding, and supported model patterns.
+Rules match in saved order; the first match wins. A matching pass-through rule suppresses the unmatched-model fallback.
+Lower priority numbers are tried first, native protocols take precedence within a priority, and weights govern the draw within a group. The list is not an actual request order.
+
+The preview reads configuration without sending a request. Runtime health, quotas, retries, and special transports such as WebSocket or compaction can change the actual path.
+Upgrade older nodes that do not provide model-policy details before using this feature.
+
 ## Check app connections and drafts
 
 **App connections** shows saved connections, the selected connection or entries
