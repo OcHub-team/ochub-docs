@@ -72,6 +72,9 @@ Do not guess from a marketing page:
 4. Compare them with the provider's price list.
 5. Add the ID that represents the model actually billed.
 
+Use the copy button beside **Pricing model** in request details to get the
+complete ID, including any provider prefix or version suffix.
+
 If Pricing model is a custom alias, choose among response-model pricing, adding
 an equivalent alias price, or changing the route mapping. The most reliable
 setup makes Pricing model equal the provider's priced model ID.
@@ -109,6 +112,9 @@ After a manual override is saved, OcHub attempts to backfill historical
 requests for that model whose token count is nonzero but total cost is still 0.
 Existing nonzero historical costs are not all recalculated, so a price change
 can create a before-and-after reporting boundary.
+
+In the manual override table, use the edit icon to load a saved price into the
+form, or the trash icon to remove that override.
 
 <Aside type="note" title="Pricing changes do not alter provider billing">
 
