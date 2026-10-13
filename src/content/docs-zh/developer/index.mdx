@@ -21,6 +21,34 @@ OcHub 为供应商网站和本地自动化提供带版本的集成接口。可�
 Deep Link 只负责传输配置，不是身份认证机制。Payload 如果包含 API Key，必须将完整 URL
 按密钥管理。
 
+## 读取总览快照
+
+`ochcli overview` 读取命令执行所在的环境。例如，用已有 SSH 别名执行第二条命令，读取远程节点：
+
+```sh
+ochcli overview --json
+ssh devbox ochcli overview --json
+```
+
+未指定范围时读取最近 24 小时。`--from` 与 `--to` 接受以**秒**为单位的 UTC Unix 时间戳，
+时间跨度必须大于零且不超过 366 天：
+
+```sh
+ochcli overview --from 1791763200 --to 1791849600 --json
+```
+
+结果包含 `generatedAt`、`window`，以及 `gateway`、`routing`、`apps`、`usage`、`trend`、
+`performance`、`recentRequests` 分区。每个分区包含 `data` 或 `error`。命令整体成功时仍可能
+有个别分区读取失败，解释缺失值前必须检查对应字段；无效时间范围会让命令失败。
+各分区分别采样，不是跨进程的原子事务。
+
+命令不会探测上游、导入会话或写入目标配置。`performance` 最多预览 20 个供应商与来源分组，
+`recentRequests` 最多包含十条保留明细。不能把性能预览重新加总为完整来源统计，也不能把
+路由配置当成实际请求轨迹。
+
+桌面远程协议使用 `overview-v1`，并要求 `provider.read`、`gateway.read` 与 `usage.read`。
+这些协议权限不会将普通 SSH 账户变成只读账户。显示数据的含义参见[总览教程](/zh/guides/overview)。
+
 ## 编辑草稿与明确应用
 
 `ochcli editor` 与桌面连接编辑器使用同一份独立草稿。保存允许未完成字段和格式错误的

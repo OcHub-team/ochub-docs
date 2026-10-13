@@ -22,6 +22,39 @@ that opens a reviewed, editable import preview in the desktop app.
 Deep Links are configuration transport, not authentication. If a payload
 contains an API key, protect the complete URL as a secret.
 
+## Read an Overview snapshot
+
+`ochcli overview` reads the environment in which the command runs. For example,
+run the second command through your existing SSH alias to read a remote node:
+
+```sh
+ochcli overview --json
+ssh devbox ochcli overview --json
+```
+
+Without bounds, the window is the previous 24 hours. `--from` and `--to` accept UTC
+Unix timestamps in **seconds**, with a positive span of no more than 366 days:
+
+```sh
+ochcli overview --from 1791763200 --to 1791849600 --json
+```
+
+The result contains `generatedAt`, `window`, and the sections `gateway`, `routing`,
+`apps`, `usage`, `trend`, `performance`, and `recentRequests`. Each section has
+`data` or `error`. A successful command may contain a failed section, so inspect
+these fields before interpreting a missing value. Invalid bounds fail the command.
+Sections are sampled separately, not in one atomic cross-process transaction.
+
+The command does not probe upstreams, import sessions, or write target
+configuration. `performance` is a preview of at most 20 provider/source groups;
+`recentRequests` contains at most ten retained details. Do not sum the performance
+preview as a full-source total or treat route configuration as a request trace.
+
+The desktop's remote protocol uses `overview-v1` and requires `provider.read`,
+`gateway.read`, and `usage.read`. These protocol capabilities do not turn an
+unrestricted SSH account into a read-only account. See the
+[Overview guide](/guides/overview) for the meaning of displayed data.
+
 ## Editing drafts and explicit application
 
 `ochcli editor` uses the same separate drafts as the desktop connection editor.

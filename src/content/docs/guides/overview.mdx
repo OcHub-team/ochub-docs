@@ -1,0 +1,74 @@
+---
+title: Overview dashboard
+description: Inspect the selected environment's configured routes, app connections, and recorded usage.
+audience: human
+sidebar:
+  order: 0
+---
+
+Open **Overview** in the sidebar to inspect one environment without changing its
+configuration. Choose this computer or a connected remote node in the workspace
+selector above the navigation. Use **Refresh** after changes; Overview reads
+stored data and the current Gateway state, without probing upstreams or importing
+new sessions.
+
+## Read configured paths
+
+**Configured paths** lists Gateway routes, enabled candidate counts, and model-rule
+counts. Search by route or upstream, then choose **Inspect** to show the route's
+associated apps and upstream interfaces. Choose **Manage routes** to edit the
+configuration on the existing providers and routes page.
+
+These relationships describe the current configuration, not the path taken by a
+past request. A route with no explicit interface list can use all enabled
+interfaces, subject to its model and protocol rules. Missing referenced interfaces
+are shown so you can correct the route. Preview limits are stated on the page;
+open the corresponding detail page for the full list.
+
+The Gateway banner reports whether the listener is running. Interface reachability
+comes from cached results without an observation timestamp. A reachable address
+can still reject credentials or fail to serve a model; HTTP 401 and 403 can count
+as reachable. Use the existing connection or upstream diagnostics when you need
+a fresh test.
+
+## Check app connections and drafts
+
+**App connections** shows saved connections, the selected connection or entries
+marked as added to a tool, and the number of saved editing drafts. Choose **Open**
+to continue on that app's page.
+
+These are OcHub's records, not confirmation that the client process loaded the
+configuration. A connection without a Gateway relationship is not automatically
+classified as direct: inspect its details to confirm how it connects. A stale
+selection also needs review on the app page.
+
+## Interpret usage and recent records
+
+Choose **24 hours**, **7 days**, or **30 days**. **Recorded usage** shows the record
+count, estimated USD cost, processed tokens including cache, and a count trend.
+Use **Show values** to read the time buckets as a table. The trend uses the serving
+node's time zone. It includes captured Gateway/proxy
+records and imported sessions under the existing deduplication rules; activity
+that was never collected is absent. Estimated cost is not the provider's invoice.
+
+**Recent records** previews up to ten retained details in the chosen window.
+Source labels distinguish captures from session imports. Imported sessions have
+no reliable per-request timing. A warning about recent failures counts only that
+preview, not all failures in the time window.
+
+Open **View usage**, **All records**, or **Open sessions** for the corresponding
+full page. When a section cannot be read, it shows an error independently; missing
+data is not converted to zero. An offline environment clears the snapshot, and
+refreshing never falls back to this computer.
+
+## Use Overview with remote nodes
+
+A node needs Overview support (`overview-v1`) and permission to read providers,
+Gateway state, and usage. Upgrade and reconnect an older node if the page cannot
+load; missing capability does not trigger a local substitute.
+
+Overview is a snapshot of separately read sections, not an atomic audit of every
+process. Use [Remote nodes](/guides/remote-nodes) for connection diagnostics and
+[Routing recipes](/advanced/routing-recipes) to change routing behavior. The
+[`ochcli overview` command](/developer#read-an-overview-snapshot) exposes the same
+read-only information for automation.
