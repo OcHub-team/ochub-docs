@@ -39,6 +39,14 @@ connection dialog. Closing the workspace menu while editing a connection keeps
 the connection form open. An operation in progress may prevent its dialog from
 closing.
 
+Inputs support copy, paste, cut, select all, and undo. On macOS, use
+**Option+Left/Right** to move by word and **Command+Left/Right** to move to the
+start or end of a line; hold **Shift** to extend the selection. Use
+**Option+Backspace** to delete the previous word or **Command+Backspace** to
+delete to the start of the line. Windows and Linux use **Ctrl+Left/Right**,
+**Ctrl+Backspace**, and **Home/End**. **Tab** inserts indentation in the raw
+configuration editor.
+
 ## Manage apps and plugins
 
 Open **Settings → Apps and plugins**:
@@ -68,6 +76,14 @@ Open **Settings → Apps and plugins**:
   labels="Open Theme|Choose a display mode|Preview a theme card|Apply the theme"
   visuals="theme-nav|theme-mode|theme-card|theme-card"
 />
+
+## Appearance across desktops
+
+OcHub selects available local interface and monospace fonts. Windows retains
+system background blur. On Linux, a blurred theme falls back to an opaque
+background so content behind the window does not reduce readability. Themes
+explicitly set to transparent remain transparent. When the Linux desktop
+provides a title bar, OcHub does not add a second one.
 
 ## Import, export, and edit
 
