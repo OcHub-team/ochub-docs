@@ -154,6 +154,11 @@ policy. If a removed variable returns, inspect its actual source.
 | OpenClaw | Check config; edit default model, environment, and tool JSON |
 | Hermes | Edit model JSON, MEMORY and USER content, and their enabled state |
 
+Claude onboarding actions directly set or clear the completed-onboarding state.
+**Apply the OcHub plugin** writes `primaryApiKey` in Claude's `config.json`; its
+restore action removes that entry. These are manual configuration actions, not
+automatic MCP or skill synchronization or managed-app plugin installation.
+
 These operations may overwrite files. OpenClaw, Hermes, and environment
 operations create backups when possible. Record any backup path shown in a
 status message.

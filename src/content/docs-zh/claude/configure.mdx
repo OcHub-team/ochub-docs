@@ -15,7 +15,6 @@ Claude Code 与 Claude Desktop 都采用“当前连接切换”模式：切换�
 | 模型供应商 | 支持 | 支持 |
 | MCP 管理 | 支持 | 不支持 |
 | 技能分发 | 支持 | 不支持 |
-| Claude 插件集成 | 支持 | 不适用 |
 | 会话读取 | 支持 | 不作为主要会话来源 |
 
 如果主要在终端中编程，先配置 Claude Code；如果只需要桌面客户端使用第三方接口，再单独配置
@@ -94,7 +93,7 @@ Claude Code 已经完成官方账号登录时，可以新增“官方登录”�
 从第三方切回官方登录后，重开 Claude Code 会话。如果仍然请求旧地址，检查终端环境变量是否
 覆盖了 `settings.json`；可到**高级工具 → 环境变量冲突**扫描。
 
-## 管理 MCP、技能与插件
+## 管理 MCP 与技能
 
 Claude Code 支持 OcHub 的 MCP 和技能分发。
 
@@ -113,15 +112,6 @@ MCP 配置通常从 Claude 配置目录推导到相邻的 `~/.claude.json`。如
 在**技能**中安装技能时选择 Claude Code，或在已安装卡片上打开 Claude Code 开关。技能
 分发依赖本机 skills CLI；安装或更新失败时先到**高级工具 → CLI 工具维护**检查版本和
 `PATH`。
-
-### Claude 插件集成
-
-Claude Code 的**应用设置**提供“Claude 插件集成”。开启后，OcHub 可以让技能和 MCP 功能
-写入 Claude Code 插件相关配置。关闭它适合需要完全手工维护 Claude 插件配置的环境，但会
-限制 OcHub 对相关功能的同步。
-
-“跳过 Claude 引导”会标记 MCP 引导已经完成。如果要重新查看官方引导，可在**高级工具**中
-选择“恢复 Claude 引导”。
 
 ## 配置 Claude Desktop
 

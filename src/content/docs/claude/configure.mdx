@@ -16,7 +16,6 @@ but OcHub manages a different capability set for each.
 | Model provider | Yes | Yes |
 | MCP management | Yes | No |
 | Skill distribution | Yes | No |
-| Claude plugin integration | Yes | Not applicable |
 | Session reading | Yes | Not a primary session source |
 
 If you mainly code in a terminal, configure Claude Code first. Configure Claude
@@ -108,7 +107,7 @@ After switching back to official login, start a new Claude Code process. If it
 still calls the old endpoint, scan **Advanced tools → Environment-variable
 conflicts** for values that override `settings.json`.
 
-## MCP, skills, and plugin integration
+## MCP and skills
 
 Claude Code supports OcHub-managed MCP and skills.
 
@@ -128,15 +127,6 @@ before syncing.
 Choose Claude Code during installation or enable it on an installed skill card.
 Distribution relies on the skills CLI. If install or update fails, inspect its
 version and `PATH` under **Advanced tools → CLI tool maintenance**.
-
-### Claude plugin integration
-
-**Claude plugin integration** in App settings allows skills and MCP features to
-write Claude Code plugin-related configuration. Disable it only when you intend
-to manage that configuration entirely by hand.
-
-**Skip Claude onboarding** marks MCP onboarding complete. To see the official
-flow again, use **Restore Claude onboarding** under Advanced tools.
 
 ## Configure Claude Desktop
 

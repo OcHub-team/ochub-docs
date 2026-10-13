@@ -138,6 +138,10 @@ Claude 与 Codex 还可以设置默认成本倍率和计价模型来源。经过
 | OpenClaw | 检查配置，编辑默认模型、环境变量和工具 JSON |
 | Hermes | 编辑模型 JSON、MEMORY 与 USER 记忆及其启用状态 |
 
+Claude 的跳过或恢复引导按钮会直接写入或清除引导完成状态。“应用 OcHub 插件”会写入
+Claude `config.json` 中的 `primaryApiKey`，恢复动作会移除该项。这些是手动配置动作，
+不会自动同步 MCP、技能或安装受管应用插件。
+
 这些操作可能覆盖文件，但 OpenClaw、Hermes 和环境变量操作会在可用时生成备份。状态提示中
 出现备份路径时立即保存下来。
 
