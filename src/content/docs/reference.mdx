@@ -54,12 +54,15 @@ changing it.
 
 | State | Meaning |
 | --- | --- |
-| Current | The target app is currently using this connection |
+| Current | The connection selected in OcHub; this does not prove the client process reread its configuration |
 | Added | Present in the tool, but not current |
 | Direct connection | The tool calls the provider directly |
 | Model provider mode | The tool calls the OcHub local gateway |
 | Applied | A model provider has been written to the app |
 | Disabled | Configuration remains, but cannot be applied or routed |
+| Draft saved | Editing content is persisted separately; the connection record and target files are unchanged |
+| Configuration written | Target files were written; client adoption and network validation are separate |
+| Waiting for app confirmation | External import is not yet confirmed; the draft is retained |
 
 ## Model provider interfaces
 
@@ -100,6 +103,9 @@ server and target app.
 ## Terms
 
 <dl>
+  <dt>Editing draft</dt>
+  <dd>Separate editing content that can include unfinished fields and invalid raw text. Only explicit application changes the connection record and target configuration.</dd>
+
   <dt>App</dt>
   <dd>An AI tool whose configuration OcHub manages, such as Claude Code or Codex.</dd>
 

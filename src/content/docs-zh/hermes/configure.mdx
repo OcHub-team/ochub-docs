@@ -25,7 +25,7 @@ OcHub 也可以管理它的 MCP 服务器和技能。Hermes 默认可能未在�
 3. 添加模型列表。第一行模型 ID 会同时成为 Hermes 运行时和 `/model` 选择器的默认模型。
 4. 按需填写显示名和上下文长度。
 5. 上游要求控制调用间隔时，填写 `rate_limit_delay` 秒数；留空表示不额外限流。
-6. 检查生成的 `config.yaml`，保存并重开 Hermes。
+6. 检查候选 `config.yaml`，点击“写入 Hermes”，完成后再重开 Hermes。
 
 缺省 API 模式会按 Chat Completions 处理，因此 Anthropic、Responses 或 Bedrock 上游必须明确
 选择对应模式。
@@ -42,4 +42,4 @@ OcHub 也可以管理它的 MCP 服务器和技能。Hermes 默认可能未在�
 保存模型或切换记忆时，OcHub 会在可用时给出备份路径。不要在 Hermes 正在写入记忆时同时
 修改，先退出运行中的 Agent。
 
-保存后，按[验收清单](/zh/guides/providers#验证新连接)确认新连接可用。
+应用后，按[验收清单](/zh/guides/providers#验证新连接)确认新连接可用。

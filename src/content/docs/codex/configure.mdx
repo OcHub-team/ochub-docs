@@ -13,11 +13,17 @@ Choose **Official**, **Model provider**, or **Manual configuration** as the mode
 1. Add the third-party URL, API key, protocol, and models under **Model providers**.
 2. Add a Codex connection, choose that provider, and select ChatGPT to retain an existing real login.
 3. Choose a model and leave context management on **Auto**.
-4. Review the configuration, save and switch the connection, then start a new Codex session.
+4. Review the configuration, apply the connection to Codex, then start a new Codex session.
 
 A provider connection keeps upstream credentials in the supplier. Manual connections use the address and API key entered in the connection. Keeping ChatGPT login alongside an independent API key does not qualify for experimental context management.
 
-**Save** stores a Codex draft without rewriting the live connection files. **Save and activate** saves the draft and switches to it. If the currently active connection changed on disk, OcHub first shows the same version diff and asks whether to save or revert those live edits. **Check configuration** checks local configuration requirements only; it sends no inference request and does not verify subscriptions or backend capabilities. Remote workspaces require an updated node supporting draft operations.
+**Save to OcHub** stores a separate editing draft, including incomplete fields or invalid raw text.
+It changes neither the connection record nor `auth.json` or `config.toml`. **Apply to Codex** saves the
+selected draft revision, validates it, and writes the target; the connection record is committed only
+when application completes. **Check configuration** sends no inference request and verifies no
+subscription or service capability. Use **Advanced** for extra options and **Config files** for
+candidate files. Undo appears only with a complete receipt. Remote nodes need the new draft protocol;
+older nodes do not fall back to an implicit write. See [edit, save, and apply](/guides/providers#edit-save-and-apply).
 
 Virtual login is under **Advanced** for compatibility with clients without a real account. It grants no subscription or official quota and cannot replace real credentials.
 
@@ -93,7 +99,7 @@ The URL's local gateway credential identifies the supplier independently of rota
 
 The URL contains a local credential and should not be shared publicly. The listener remains loopback-only. Route authentication does not verify a ChatGPT subscription. Disabling its key rejects the connection.
 
-Legacy URLs without `/connection/…` still support the manually configured global OAuth binding. Save and activate the connection again to migrate.
+Legacy URLs without `/connection/…` still support the manually configured global OAuth binding. Apply the connection again to migrate.
 
 ## Local history, MCP, and skills
 

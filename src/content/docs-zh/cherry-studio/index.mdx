@@ -9,7 +9,7 @@ sidebar:
     icon: ph:cherries
 ---
 
-Cherry Studio 采用“仅导入”集成。OcHub 在自己的数据库中保存可复用连接，并通过
+Cherry Studio 采用“仅导入”集成。OcHub 保留准备导入的配置信息和编辑草稿，并通过
 Cherry Studio 公开的自定义 URL 协议把连接交给已安装的应用；不会修改 Cherry Studio
 的 SQLite 数据库，也不会调用其内部 Electron IPC。
 
@@ -18,14 +18,18 @@ Cherry Studio 公开的自定义 URL 协议把连接交给已安装的应用；�
 1. 在 OcHub 侧边栏打开 **Cherry Studio**，点击**添加连接**。
 2. 选择与上游一致的协议：OpenAI Chat Completions、OpenAI Responses、Anthropic
    Messages、Gemini、Vertex AI、Vertex Anthropic 或 Ollama。
-3. 填写 Base URL 和 API Key，然后保存连接。
-4. 点击连接卡片上的**导入**。
+3. 填写 Base URL 和 API Key；可先**保存到 OcHub**保留独立草稿。
+4. 准备完成后，在编辑器选择**在 Cherry Studio 中导入**。已有连接仍可使用卡片上的**导入**。
 5. Cherry Studio 会打开供应商确认弹窗。检查名称、端点、密钥和协议后，在 Cherry
    Studio 中确认。
 
-OcHub 只在点击按钮时生成 `cherrystudio://providers/api-keys` Deep Link。完整 API Key
-会在这一刻从本地存储读取，不进入渲染状态、日志或剪贴板。密钥会作为本机 URL 载荷交给
+OcHub 只在点击按钮时生成 `cherrystudio://providers/api-keys` Deep Link。API Key
+来自选中的配置或草稿，不会自动复制到剪贴板。密钥会作为本机 URL 载荷交给
 Cherry Studio，因此只应在可信电脑上执行导入。
+
+保存草稿不修改 Cherry Studio，也不提交一条已应用的正式连接。只有导入请求成功交给
+系统后才表示请求已发送；仍需在 Cherry Studio 中确认。OcHub 不把等待确认标记为已启用，
+也不提供没有完整恢复回执的一键撤回。未确认的草稿继续保留。
 
 ## 范围与限制
 

@@ -24,14 +24,14 @@ Grok Build 以一个当前模型 Profile 工作：它的实时配置只指向一
 
 6. **填写上下文窗口。** 使用上游模型真实支持的 Token 数，不要用营销页面上的总长度猜测。
 
-7. **查看 `config.toml` 预览并切换。** 重开 Grok Build 后发起真实请求。
+7. **查看候选 `config.toml` 并应用到 Grok Build。** 重开 Grok Build 后发起真实请求。
 
 </Steps>
 
 <OcHubStepsVisual
   locale="zh"
   app="Grok Build"
-  labels="定义配置名称|填写上游模型|填写 Base URL|选择 API Key 或环境变量鉴权|选择匹配的 API Backend|设置上下文窗口|检查 config.toml 并切换"
+  labels="定义配置名称|填写上游模型|填写 Base URL|选择 API Key 或环境变量鉴权|选择匹配的 API Backend|设置上下文窗口|检查 config.toml 并应用"
   visuals="identity|model|fields|fields|source|model|preview"
 />
 
@@ -47,6 +47,6 @@ Grok Build 以一个当前模型 Profile 工作：它的实时配置只指向一
 
 也可以在「模型供应商」页面保存后，把该供应商应用到 Grok Build。
 
-保存后，按[验收清单](/zh/guides/providers#验证新连接)确认切换成功。生效配置、
+应用后，按[验收清单](/zh/guides/providers#验证新连接)确认切换成功。生效配置、
 自定义 Backend、权限、沙箱与兼容导入见
 [Grok Build 进阶与易踩坑](/zh/grok-build/advanced)。

@@ -35,6 +35,24 @@ Closing OcHub does not move a running tool back to the local computer. A switch
 writes the tool's native configuration **on the selected remote node**, so that
 tool keeps working there afterward.
 
+## Remote editing-draft boundaries
+
+Saving and applying in the connection editor requires the node to advertise
+`editor-drafts-v1` and grant the corresponding read/write capabilities. Older
+nodes retain their existing operations, but Save to OcHub never falls back to an
+ordinary update that can write configuration. Upgrade the node for independent drafts.
+
+Known built-in apps use a matching codec. A remote `APP_SCHEMA` field list is not
+enough to construct an unknown app's full codec: structured editing is unavailable
+for unknown remote adapters, and writes never fall back to the local machine.
+Desktop support for local declarative plugins does not imply support for every
+remote plugin.
+
+Disconnection preserves current input, but saving and applying require a reconnect.
+Persisted drafts and text held only in the current window are different states.
+After reconnecting, check the draft revision and operation result before retrying.
+
+
 ## What the current version can manage
 
 Remote Nodes currently supports:

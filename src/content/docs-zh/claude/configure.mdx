@@ -34,9 +34,9 @@ Claude Desktop。两个应用的连接不会自动互相复制。
 
 5. **先配置一个模型。** “默认模型”是各角色没有单独映射时的回退模型。第一次连接只填一个确认可用的模型即可。
 
-6. **查看写入预览。** 展开“将写入的文件”，确认目标是 Claude 配置目录中的 `settings.json`，且未意外覆盖 hooks、permissions、statusline 等原有字段。
+6. **查看写入预览。** 打开“配置文件”，确认目标是 Claude 配置目录中的 `settings.json`，且未意外覆盖 hooks、permissions、statusline 等原有字段。
 
-7. **保存并切换。** 保存只把连接加入 OcHub；点击“切换”后才会把它设为 Claude Code 当前连接。
+7. **保存草稿或应用。** “保存到 OcHub”仅保留编辑草稿；准备完成后点击“应用到 Claude Code”写入目标配置。
 
 8. **重开终端验证。** 退出正在运行的 Claude Code 会话，新开终端发起一条短请求，再到 OcHub 的“用量”或目标供应商后台核对请求。
 
@@ -45,7 +45,7 @@ Claude Desktop。两个应用的连接不会自动互相复制。
 <OcHubStepsVisual
   locale="zh"
   app="Claude Code"
-  labels="打开 Claude Code 并添加连接|填写 Anthropic 兼容地址|选择鉴权变量|填写 API Key|先使用一个模型|检查 settings.json|保存并切换|在新终端验证"
+  labels="打开 Claude Code 并添加连接|填写 Anthropic 兼容地址|选择鉴权变量|填写 API Key|先使用一个模型|检查 settings.json|保存草稿或应用|在新终端验证"
   visuals="toolbar-add|fields|source|fields|model|preview|save|result"
 />
 
@@ -120,7 +120,7 @@ Claude Desktop 的连接与 Claude Code 分开管理：
 1. 打开 **Claude Desktop** 应用页。
 2. 新增第三方连接，填写 Base URL 与 API Key；或选择官方登录。
 3. 展开写入预览，确认目标位于 Claude Desktop 配置目录。
-4. 保存并切换。
+4. 检查后点击“应用到 Claude Desktop”；仅保存草稿不会改变客户端。
 5. 完全退出 Claude Desktop 后重新打开，发起一条短请求。
 
 Claude Desktop 不参与 OcHub 的 MCP 和技能管理。需要配置 Claude Desktop 自己的扩展能力

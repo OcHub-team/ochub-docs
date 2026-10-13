@@ -41,11 +41,11 @@ Claude Code と Claude Desktop はどちらも「現在の接続を切り替え�
 5. **最初は 1 モデルだけ設定します。** デフォルトモデルは個別設定のない役割の
    フォールバックです。
 
-6. **プレビューを確認します。** 「書き込むファイル」を展開し、対象の `settings.json` と、
+6. **プレビューを確認します。** 「設定ファイル」を開き、対象の `settings.json` と、
    hooks、permissions、statusline など既存項目が保持されることを確認します。
 
-7. **保存して切り替えます。** 保存は OcHub へ追加、切り替えは現在の Claude Code 接続へ
-   反映します。
+7. **下書きを保存するか適用します。** OcHub に保存は編集下書きのみです。準備できたら
+   Claude Code に適用を選び、対象設定へ書き込みます。
 
 8. **新しいターミナルで確認します。** 既存セッションを終了し、短いリクエストを送り、
    使用量またはプロバイダー側ログを確認します。
@@ -55,7 +55,7 @@ Claude Code と Claude Desktop はどちらも「現在の接続を切り替え�
 <OcHubStepsVisual
   locale="ja"
   app="Claude Code"
-  labels="Claude Code で接続を追加する|Anthropic 互換アドレスを入力する|認証変数を選ぶ|API キーを入力する|最初は 1 モデルを使う|settings.json を確認する|保存して切り替える|新しいターミナルで確認する"
+  labels="Claude Code で接続を追加する|Anthropic 互換アドレスを入力する|認証変数を選ぶ|API キーを入力する|最初は 1 モデルを使う|settings.json を確認する|下書きを保存するか適用する|新しいターミナルで確認する"
   visuals="toolbar-add|fields|source|fields|model|preview|save|result"
 />
 
@@ -123,7 +123,7 @@ MCP は通常 Claude 設定ディレクトリの隣にある `~/.claude.json` �
 1. Claude Desktop のアプリページを開きます。
 2. Base URL とキーを持つサードパーティー接続、または公式ログインを追加します。
 3. プレビューで Claude Desktop の保存先を確認します。
-4. 保存して切り替えます。
+4. 確認後に Claude Desktop に適用を選びます。下書き保存だけではクライアントは変わりません。
 5. Claude Desktop を完全終了して開き直し、短いリクエストを送ります。
 
 OcHub は Claude Desktop の MCP とスキルを管理しません。拡張はクライアント自身の設定を

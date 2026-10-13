@@ -10,8 +10,6 @@ A direct connection writes the connection's settings to the selected AI tool, an
 the tool calls that provider without passing through the OcHub gateway. It is the
 best way to get started.
 
-<OcHubAppFigure locale="en" screen="editor" />
-
 ## Use this path when
 
 - You are configuring OcHub for the first time.
@@ -40,24 +38,23 @@ If several tools should share routing, model aliases, or a backup upstream, use
    provider. The model provider editor handles `/v1` itself; for a direct connection,
    rely on the generated file preview shown by the page.
 
-5. **Run available checks.** Try **Test URL**, **Fetch models**, or **Check
-   balance** where available. A successful URL test only proves that the
-   endpoint returned an HTTP response; it does not prove that the key and model
-   work.
+5. **Check configuration.** The footer action checks syntax and required fields.
+   Supported network checks are in Advanced; a URL test does not verify account
+   permission or a working model request.
 
-6. **Review the write preview.** Expand **Files to be written** and verify the
-   destination path and important fields. If the preview is empty, complete the
-   name and connection details first.
+6. **Review candidate configuration.** Open Config files and inspect the paths
+   and fields. Final files are merged in the target environment.
 
-7. **Save.** Saving adds the connection to OcHub. Whether it is immediately
-   written to the tool depends on the action offered by that app page.
+7. **Save a draft or apply.** Save to OcHub retains a separate editing draft,
+   including unfinished content. Choose Apply to app or Write to app when ready;
+   saving alone changes neither the connection record nor the target files.
 
 </Steps>
 
 <OcHubStepsVisual
   locale="en"
   app="Claude Code"
-  labels="Choose the target app|Open the connection editor|Choose direct or model-provider mode|Enter the endpoint and key|Run the available checks|Review the generated files|Save the connection"
+  labels="Choose the target app|Open the connection editor|Choose direct or model-provider mode|Enter the endpoint and key|Run the available checks|Review the generated files|Save a draft or explicitly apply"
   visuals="sidebar-app|toolbar-add|source|fields|tests|preview|save"
 />
 
@@ -106,6 +103,10 @@ For Codex, the dialog compares `auth.json` and `config.toml` separately and also
 includes malformed `auth.json` text.
 
 ## Roll back
+
+The editor offers **Undo this application** only with a complete write receipt.
+It checks for later changes before restoring anything and refuses to overwrite
+conflicts. See [edit, save, and apply](/guides/providers#edit-save-and-apply).
 
 - To use another connection, select **Switch** on its card.
 - To restore the tool's own account state, switch to an Official login

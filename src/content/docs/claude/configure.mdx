@@ -43,12 +43,12 @@ Connections are not copied between the two automatically.
 5. **Start with one model.** The default model is the fallback for roles that
    have no dedicated mapping.
 
-6. **Review the preview.** Expand Files to be written. Confirm the destination
+6. **Review the preview.** Open Config files. Confirm the destination
    `settings.json` and make sure native hooks, permissions, and statusline
    fields are preserved.
 
-7. **Save and switch.** Save adds the connection to OcHub; Switch makes it the
-   current Claude Code connection.
+7. **Save a draft or apply.** Save to OcHub retains an editing draft. Choose
+   Apply to Claude Code when ready to write the target configuration.
 
 8. **Verify in a new terminal.** Quit an existing Claude Code session, make a
    short request, and inspect OcHub Usage or the provider dashboard.
@@ -58,7 +58,7 @@ Connections are not copied between the two automatically.
 <OcHubStepsVisual
   locale="en"
   app="Claude Code"
-  labels="Open Claude Code and add a connection|Enter the Anthropic-compatible endpoint|Choose the authentication variable|Enter the API key|Start with one model|Review settings.json|Save and switch|Verify from a new terminal"
+  labels="Open Claude Code and add a connection|Enter the Anthropic-compatible endpoint|Choose the authentication variable|Enter the API key|Start with one model|Review settings.json|Save a draft or apply|Verify from a new terminal"
   visuals="toolbar-add|fields|source|fields|model|preview|save|result"
 />
 
@@ -135,7 +135,7 @@ Claude Desktop connections are managed separately:
 1. Open the Claude Desktop app page.
 2. Add a third-party connection with Base URL and key, or choose Official login.
 3. Expand the preview and verify the Claude Desktop destination.
-4. Save and switch.
+4. Review and choose Apply to Claude Desktop; saving a draft does not change the client.
 5. Fully quit Claude Desktop, reopen it, and make a short request.
 
 OcHub does not manage Claude Desktop MCP or skills. Use the client's native

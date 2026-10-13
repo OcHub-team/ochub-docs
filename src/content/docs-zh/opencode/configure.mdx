@@ -28,7 +28,7 @@ OpenCode 把每个连接写在 `opencode.json` 的 `provider.<id>` 下，因此�
 4. 添加模型 ID、显示名，以及可选的上下文窗口和最大输出。
 5. 只有上游要求时才增加 `options.*` 扩展或自定义请求头。
 6. 展开预览，确认只新增或更新目标 `provider.<id>`。
-7. 保存后使用“添加到工具”或“切换”，再从 OpenCode 中选择模型验证。
+7. 点击“写入 OpenCode”；也可先“保存到 OcHub”稍后继续。写入完成后从 OpenCode 中选择模型验证。
 
 “选项扩展”会把布尔值和数字按字面量解析，适合 `setCacheKey` 或 Bedrock 的区域与鉴权字段。
 不确定字段类型时先查上游或 OpenCode 配置要求，避免把 `true` 错写成字符串。
@@ -43,6 +43,6 @@ OcHub 的**高级工具**可以读取并禁用 OMO / OMO Slim。禁用会删除�
 3. 只有明确不再使用时才执行禁用。
 4. 回到 OpenCode 页面重新确认当前 Provider。
 
-保存后，按[验收清单](/zh/guides/providers#验证新连接)确认新连接可用。配置层、
+应用后，按[验收清单](/zh/guides/providers#验证新连接)确认新连接可用。配置层、
 凭据、AI SDK 协议选择和会话分享见
 [OpenCode 进阶与易踩坑](/zh/opencode/advanced)。

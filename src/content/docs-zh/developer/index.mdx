@@ -20,3 +20,58 @@ OcHub 为供应商网站和本地自动化提供带版本的集成接口。可�
 
 Deep Link 只负责传输配置，不是身份认证机制。Payload 如果包含 API Key，必须将完整 URL
 按密钥管理。
+
+## 编辑草稿与明确应用
+
+`ochcli editor` 与桌面连接编辑器使用同一份独立草稿。保存允许未完成字段和格式错误的
+原始文本，不会覆盖正式 Provider，也不会写入应用配置。输入文件是 `EditorDraftInput`，
+不是目标工具的原始配置文件。下面使用无效的示例凭据，不要直接用于真实服务：
+
+```json
+{
+  "provider": {
+    "id": "work-api",
+    "name": "Work API",
+    "settingsConfig": {
+      "env": {
+        "ANTHROPIC_BASE_URL": "https://api.example.test",
+        "ANTHROPIC_AUTH_TOKEN": "REPLACE_ME"
+      }
+    }
+  },
+  "originalProviderId": null,
+  "baseProviderHash": null,
+  "editorState": {},
+  "rawDocuments": null,
+  "commonConfig": null
+}
+```
+
+将它保存为 `draft-input.json`，再创建草稿：
+
+```sh
+ochcli editor save work-draft --app claude --from draft-input.json --json
+ochcli editor list --app claude --json
+ochcli editor get work-draft --app claude --json
+```
+
+| 命令 | 用途 |
+| --- | --- |
+| `editor save ID --app APP --from FILE` | 新建独立草稿；首次不传 expected revision |
+| `editor save ID --app APP --from FILE --expected-revision N` | 只在当前版本仍为 N 时更新草稿 |
+| `editor apply ID --app APP --revision N --on-drift abort` | 校验并应用指定版本，不能用旧版本覆盖新编辑 |
+| `editor delete ID --app APP --revision N` | 删除指定版本的草稿，不删除正式连接 |
+| `editor undo RECEIPT_ID` | 在完整回执和写入后状态核对通过时撤回该次应用 |
+
+使用返回的 `revision`，不要猜测或永久写死。`--on-drift` 支持 `abort`（默认）、`save`、
+`revert`，分别为遇到外部变化时中止、保存当前版本、明确回退。该策略不绕过草稿版本或
+Provider 基线冲突。应用失败返回非零退出码，结构化错误包含失败阶段、恢复是否需要介入
+以及可用的回执；草稿保留。`externalConfirmation` 表示还需要外部应用确认，不代表已写入成功。
+
+`editorState` 保存编辑界面的未完成输入；`rawDocuments` 按 codec 文件顺序保存原文。
+原文存在时，应用必须重新解析它，不能仅采用旧 `provider` 的解析结果。编辑已有连接应保留
+原草稿的 `originalProviderId` 和 `baseProviderHash`。不要把脱敏输出覆盖回原草稿。
+默认 `get` 输出会隐藏原始编辑状态、原文和共享片段；确需完整内容时使用 `--show-secrets`
+并按密钥文件管理。`--dry-run` 只报告操作意图，不代替 codec 检查或最终文件差异。
+
+每个子命令的实际选项可通过 `ochcli editor --help` 和 `ochcli editor apply --help` 查看。

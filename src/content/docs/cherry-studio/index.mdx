@@ -9,8 +9,8 @@ sidebar:
     icon: ph:cherries
 ---
 
-Cherry Studio integration is import-only. OcHub stores reusable connection
-details in its own database and uses Cherry Studio's public custom-URL protocol
+Cherry Studio integration is import-only. OcHub keeps configuration details and editing
+drafts prepared for import and uses Cherry Studio's public custom-URL protocol
 to hand them to the installed app. It does not edit Cherry Studio's SQLite
 database or call its internal Electron IPC.
 
@@ -20,16 +20,22 @@ database or call its internal Electron IPC.
 2. Choose the matching protocol type: OpenAI Chat Completions, OpenAI
    Responses, Anthropic Messages, Gemini, Vertex AI, Vertex Anthropic, or
    Ollama.
-3. Enter the provider Base URL and API key, then save the connection.
-4. Select **Import** on its card.
+3. Enter the provider Base URL and API key. **Save to OcHub** retains a separate draft.
+4. Select **Import in Cherry Studio** in the editor when ready. Existing cards
+   still offer **Import**.
 5. Cherry Studio opens its provider confirmation dialog. Review the provider
    name, endpoint, key, and type, then confirm there.
 
 OcHub generates a `cherrystudio://providers/api-keys` Deep Link only when the
-button is clicked. The full API key is read from local storage at that moment;
-it is not placed in rendered UI state, logs, or the clipboard. The key is part
+button is clicked. The API key is taken from the selected
+configuration or draft; it is not automatically copied to the clipboard. The key is part
 of the local URL payload delivered to Cherry Studio, so use this action only on
 a trusted machine.
+
+Saving a draft changes neither Cherry Studio nor an applied connection record.
+A request is sent only after it has been handed to the system; confirmation in
+Cherry Studio is still required. OcHub does not mark a pending import as enabled
+or offer undo without a complete recovery receipt. The unconfirmed draft remains.
 
 ## Scope and limitations
 

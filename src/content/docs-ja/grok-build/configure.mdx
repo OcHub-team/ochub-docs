@@ -27,14 +27,14 @@ Grok Build は 1 つの現在モデルプロファイルで動作します。実
 
 6. **コンテキスト長を設定します。** 上流モデルが実際に対応するトークン数を使います。
 
-7. **`config.toml` を確認して切り替えます。** Grok Build を再起動し、実リクエストを送ります。
+7. **候補の `config.toml` を確認して Grok Build に適用します。** Grok Build を再起動し、実リクエストを送ります。
 
 </Steps>
 
 <OcHubStepsVisual
   locale="ja"
   app="Grok Build"
-  labels="プロファイルを定義する|上流モデルを入力する|Base URL を入力する|API キーまたは環境変数認証を選ぶ|対応する API バックエンドを選ぶ|コンテキスト長を設定する|config.toml を確認して切り替える"
+  labels="プロファイルを定義する|上流モデルを入力する|Base URL を入力する|API キーまたは環境変数認証を選ぶ|対応する API バックエンドを選ぶ|コンテキスト長を設定する|config.toml を確認して適用する"
   visuals="identity|model|fields|fields|source|model|preview"
 />
 
@@ -53,6 +53,6 @@ Grok Build は 1 つの現在モデルプロファイルで動作します。実
 保存後に「モデルプロバイダー」ページから同じプロバイダーを Grok Build へ適用することも
 できます。
 
-保存後は[確認チェックリスト](/ja/guides/providers#新しい接続を確認する)に従って切り替えを
+適用後は[確認チェックリスト](/ja/guides/providers#新しい接続を確認する)に従って切り替えを
 確認します。実効設定、カスタム Backend、権限、サンドボックス、互換インポートは
 [Grok Build の高度な設定と落とし穴](/ja/grok-build/advanced)を参照してください。

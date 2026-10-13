@@ -21,3 +21,62 @@ OcHub は、プロバイダーの Web サイトとローカル自動化向けに
 
 Deep Link は設定の転送手段であり、認証ではありません。Payload に API キーが含まれる
 場合は、URL 全体を秘密情報として保護してください。
+
+## 編集下書きと明示的な適用
+
+`ochcli editor` はデスクトップ接続エディターと同じ独立した下書きを使います。
+未完成の項目や不正な原文を保存しても、正式な Provider や対象設定は変更しません。
+入力は対象ツールの原文ファイルではなく `EditorDraftInput` です。次の例の認証情報は
+動作しない例示用です。実サービスで使う前に置き換えてください。
+
+```json
+{
+  "provider": {
+    "id": "work-api",
+    "name": "Work API",
+    "settingsConfig": {
+      "env": {
+        "ANTHROPIC_BASE_URL": "https://api.example.test",
+        "ANTHROPIC_AUTH_TOKEN": "REPLACE_ME"
+      }
+    }
+  },
+  "originalProviderId": null,
+  "baseProviderHash": null,
+  "editorState": {},
+  "rawDocuments": null,
+  "commonConfig": null
+}
+```
+
+`draft-input.json` として保存してから下書きを作成します。
+
+```sh
+ochcli editor save work-draft --app claude --from draft-input.json --json
+ochcli editor list --app claude --json
+ochcli editor get work-draft --app claude --json
+```
+
+| コマンド | 用途 |
+| --- | --- |
+| `editor save ID --app APP --from FILE` | 独立した下書きを新規作成。expected revision の省略は初回のみ |
+| `editor save ID --app APP --from FILE --expected-revision N` | 現在の版が N と一致する場合のみ更新 |
+| `editor apply ID --app APP --revision N --on-drift abort` | 指定版を検証・適用し、新しい編集を旧版で上書きしない |
+| `editor delete ID --app APP --revision N` | 下書きの指定版を削除。正式な接続は削除しない |
+| `editor undo RECEIPT_ID` | 完全な記録があり、書き込み後の状態が一致する場合だけ取り消す |
+
+返された `revision` を使用し、推測や固定値にしないでください。`--on-drift` は `abort`
+（既定）、`save`、`revert` に対応し、外部変更時の中止、現在の実設定の保存、明示的な
+復元を指定します。下書き版や Provider の基準状態の競合を無視するものではありません。
+適用に失敗すると終了コードは非ゼロとなり、失敗段階、復旧の必要性、利用可能な記録を
+構造化エラーで返します。下書きは保持されます。`externalConfirmation` は外部アプリでの
+確認が必要な状態で、適用完了ではありません。
+
+`editorState` は未完成のフォーム入力、`rawDocuments` は codec のファイル順で原文を保持します。
+原文がある場合、適用時に再解析し、古い `provider` の解析結果だけを使いません。既存の
+接続を編集する際は `originalProviderId` と `baseProviderHash` を保持してください。
+マスク済み出力で下書きを上書きしないでください。既定の `get` は生の編集状態、原文、
+共有片段を非表示にします。完全な内容が必要な場合だけ `--show-secrets` を使い、認証情報として
+保管します。`--dry-run` は操作意図の表示のみで、codec の検証や最終ファイルの差分ではありません。
+
+実際のオプションは `ochcli editor --help` と `ochcli editor apply --help` で確認できます。

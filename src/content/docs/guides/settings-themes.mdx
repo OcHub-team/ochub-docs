@@ -61,9 +61,18 @@ Open **Settings → Apps and plugins**:
 - **Open plugin folder** opens the local manifest directory, normally
   `~/.ochub/apps/`. After adding or editing a `.toml` manifest, select
   **Reload plugins**. Load errors appear on this page.
-- A custom app without a desktop page is marked **CLI available · No desktop
-  page yet**. It can use the CLI; loading its plugin does not create a desktop
-  connection editor.
+- Local declarative plugins with a configuration schema appear in app navigation
+  and use the same General, Advanced, Config files, and draft editor. Adding a
+  supported local app requires installing its plugin, without changing OcHub itself.
+- Only declared capabilities are exposed. Network probes, official login, or
+  special maintenance actions do not appear automatically. Unknown keys are
+  retained; exact formatting and comment preservation depend on the format.
+- Reopen the editor after changing a plugin and review its fields. Drafts retain
+  their adapter revision; replacing an adapter while editing blocks direct
+  application of the older draft.
+- A remote field list does not supply a full codec. Remote plugins whose codecs
+  are unknown to the desktop cannot use structured editing. This limitation does
+  not apply to supported local declarative plugins.
 
 <OcHubStepsVisual
   locale="en"

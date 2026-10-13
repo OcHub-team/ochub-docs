@@ -23,13 +23,43 @@ When you open an app page, OcHub reads the tool's current live configuration:
 - If a custom field cannot be represented completely, inspect the write preview
   before saving so it is not lost.
 
+## Edit, save, and apply
+
+The connection editor has **General**, **Advanced**, and **Config files** views.
+Check, save, and apply actions stay in the footer. General covers routine setup;
+Advanced retains the extra options supported by the app. Changing views does not
+turn off configured advanced options.
+
+| Action | Result |
+| --- | --- |
+| Save to OcHub | Save a separate editing draft, including incomplete fields or invalid raw text; the connection record and target configuration stay unchanged |
+| Check configuration | Check syntax, required fields, and local constraints; no model request or account-permission check |
+| Apply to app / Write to app | Save the selected draft revision, validate it, and write the target; commit the connection record only after application completes |
+| Import in target app | Require confirmation by the external app; retain the draft while confirmation is pending |
+
+Normal save keeps the editor open. Resume later from the app page's draft entry.
+**Command+S / Ctrl+S** performs the same save, including invalid raw-editor text.
+OcHub does not automatically save every keystroke. Leaving changed content offers
+continue editing, discard changes, or save and leave.
+
+Draft saved, configuration written, and client adoption are separate states.
+If application fails, inspect the failed stage and continue from the retained
+draft. Disconnection keeps the current text in memory; reconnect before saving or
+applying. In-memory text is not a persisted draft.
+
+**Undo this application** appears only when a complete write receipt is available.
+Undo verifies that the current state still matches this operation's result and
+refuses to overwrite later changes. With a shared file, even a new edit to another
+connection can block undo. Operations involving credentials, gateway preparation,
+or external import do not offer undo unless their full recovery scope is covered.
+
 ## Everyday connection actions
 
 | Action | Use it for |
 | --- | --- |
 | Edit | Change endpoints, keys, models, notes, or advanced fields |
 | Drag to reorder | Change list and system-menu order |
-| Copy to app | Regenerate a new connection in another app's format |
+| Copy to app | Create a separate draft in the target app's format; review and apply it there without changing the source |
 | Add to tool | Preload a connection without making it current |
 | Switch | Make it the live connection immediately |
 | Remove from tool | Keep OcHub data while removing the live tool entry |
@@ -83,20 +113,25 @@ save is in progress, select **Save directory** again to store the newer text.
 
 ## Checks in the editor
 
-- **Test URL** measures the latency of an HTTP response.
-- **Fetch models** requests the model list with the current endpoint and key.
-- **Check balance** works only for upstream services that implement a
-  compatible balance endpoint.
-- **Files to be written** shows generated content and destination paths.
-- **Common configuration** merges an app-level shared snippet into connections
-  that enable it.
+**Config files** shows candidate content and paths. Final files are merged with
+existing configuration in the target environment; the preview is not a promise
+to replace an entire file unconditionally. Long lines scroll horizontally.
 
-Scroll horizontally in **Files to be written** to read long configuration lines.
-Use **Edit** to open the raw configuration editor, then **Apply** to return your
-changes to the connection form. Save the connection to persist those changes.
+Use **Edit** to change raw text. **Update edits** merges parsable content into the
+form without writing the target. **Back to editor** retains the text. Invalid text
+can still be saved as a draft; fix it before returning to structured fields.
+Unmodeled keys are retained. Exact formatting and comment preservation depend on
+the app's format and adapter.
 
-A successful test does not prove that a model can be called. A real request
-from the target CLI is the final check.
+**Common configuration** is an app-level shared snippet. Matching keys override
+connection values under the actual merge rules; this is not default inheritance.
+Changing the snippet affects connections that use it. Saving a draft leaves the
+shared content unchanged; an explicit apply commits the change.
+
+Supported built-in apps also provide **Test URL**, **Fetch models**, and **Check
+balance** for an HTTP response, model catalog, or compatible balance endpoint.
+None proves that a real model request succeeds. Recheck after changing the
+configuration, then verify with a real request from the target tool.
 
 ## When configuration changed externally
 
@@ -120,10 +155,10 @@ Do not let OcHub, cc-switch, and a manual editor write the same file at once.
 
 ## Verify a new connection
 
-After saving or switching a connection in any app:
+After applying edits or switching an existing connection:
 
 1. Review the generated file and path.
-2. Confirm the card is Added or Current after saving.
+2. Confirm Configuration written, or finish confirmation in the external app. Saving a draft alone does not write the target.
 3. Fully restart the target tool.
 4. Select the new provider and model.
 5. Make one short request.
@@ -131,12 +166,12 @@ After saving or switching a connection in any app:
 
 | Problem | Common cause |
 | --- | --- |
-| Connection missing | It was saved but not added, or the directory is wrong |
+| Connection missing | Only a draft was saved without applying, or the directory is wrong |
 | One connection replaced another | Duplicate Provider ID in a coexistence app |
 | 401 | Key, environment variable, or launch environment mismatch |
 | 404 / body error | Wrong backend, protocol, or API mode |
 | Model appears but fails | Model ID, context limit, or permission mismatch |
-| Advanced save fails | Incorrect JSON/YAML node type |
+| Advanced apply fails | Incorrect JSON/YAML node type; invalid content can still be saved as a draft |
 
 ## App-specific field guides
 

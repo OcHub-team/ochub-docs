@@ -21,3 +21,67 @@ that opens a reviewed, editable import preview in the desktop app.
 
 Deep Links are configuration transport, not authentication. If a payload
 contains an API key, protect the complete URL as a secret.
+
+## Editing drafts and explicit application
+
+`ochcli editor` uses the same separate drafts as the desktop connection editor.
+Saving permits incomplete fields and invalid raw text without replacing a
+Provider record or writing target configuration. The input is `EditorDraftInput`,
+not a target tool's raw configuration file. This example contains unusable demo
+credentials; replace them before using a real service:
+
+```json
+{
+  "provider": {
+    "id": "work-api",
+    "name": "Work API",
+    "settingsConfig": {
+      "env": {
+        "ANTHROPIC_BASE_URL": "https://api.example.test",
+        "ANTHROPIC_AUTH_TOKEN": "REPLACE_ME"
+      }
+    }
+  },
+  "originalProviderId": null,
+  "baseProviderHash": null,
+  "editorState": {},
+  "rawDocuments": null,
+  "commonConfig": null
+}
+```
+
+Save it as `draft-input.json`, then create a draft:
+
+```sh
+ochcli editor save work-draft --app claude --from draft-input.json --json
+ochcli editor list --app claude --json
+ochcli editor get work-draft --app claude --json
+```
+
+| Command | Purpose |
+| --- | --- |
+| `editor save ID --app APP --from FILE` | Create a separate draft; omit expected revision only on creation |
+| `editor save ID --app APP --from FILE --expected-revision N` | Update only if its current revision is still N |
+| `editor apply ID --app APP --revision N --on-drift abort` | Validate and apply that revision without replacing newer edits |
+| `editor delete ID --app APP --revision N` | Delete that draft revision, not a connection record |
+| `editor undo RECEIPT_ID` | Undo only when a complete receipt and matching post-write state allow it |
+
+Use the returned `revision`; do not guess or hard-code it. `--on-drift` accepts
+`abort` (default), `save`, or `revert`: stop on external changes, preserve the live
+version, or explicitly revert it. This policy does not bypass draft-revision or
+Provider-baseline conflicts. Failed application returns a nonzero exit status and
+structured details for the failed stage, recovery requirements, and any receipt.
+The draft is retained. `externalConfirmation` requires confirmation in the
+external app and is not proof of successful application.
+
+`editorState` stores unfinished form input; `rawDocuments` stores native text in
+codec file order. When raw documents exist, application reparses them instead of
+using an older parsed `provider`. When editing an existing connection, preserve
+the draft's `originalProviderId` and `baseProviderHash`. Never overwrite a draft
+with redacted output. By default, `get` hides raw editor state, raw documents, and
+shared snippets; use `--show-secrets` only when complete contents are required and
+protect the output as credentials. `--dry-run` reports intent only; it is not a
+codec validation or a final-file diff.
+
+See `ochcli editor --help` and `ochcli editor apply --help` for the installed
+command's options.

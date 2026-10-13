@@ -9,8 +9,7 @@ sidebar:
     icon: ph:cherries
 ---
 
-Cherry Studio との連携はインポート専用です。OcHub は再利用できる接続を自身のデータベースに
-保存し、Cherry Studio が公開するカスタム URL プロトコルでインストール済みアプリへ渡します。
+Cherry Studio との連携はインポート専用です。OcHub はインポートする設定と編集下書きを保持し、Cherry Studio が公開するカスタム URL プロトコルでインストール済みアプリへ渡します。
 Cherry Studio の SQLite データベースを編集せず、内部 Electron IPC も呼び出しません。
 
 ## プロバイダーをインポートする
@@ -18,14 +17,17 @@ Cherry Studio の SQLite データベースを編集せず、内部 Electron IPC
 1. OcHub のサイドバーで **Cherry Studio** を開き、**接続を追加**を選びます。
 2. 上流に合う種類を選びます：OpenAI Chat Completions、OpenAI Responses、Anthropic
    Messages、Gemini、Vertex AI、Vertex Anthropic、Ollama。
-3. Base URL と API Key を入力して保存します。
-4. 接続カードの**インポート**を選びます。
+3. Base URL と API Key を入力します。**OcHub に保存**で独立した下書きを保持できます。
+4. 準備できたらエディターの **Cherry Studio でインポート**を選びます。既存の接続カードにも**インポート**があります。
 5. Cherry Studio の確認ダイアログで名前、端点、キー、種類を確認し、そこで確定します。
 
 OcHub はボタンを押した時だけ `cherrystudio://providers/api-keys` Deep Link を生成します。
-完全な API Key はその時点でローカル保存領域から読み込まれ、描画状態、ログ、クリップボードには
-入りません。キーはローカル URL のペイロードとして Cherry Studio に渡るため、信頼できる端末で
+API Key は選択した設定または下書きから取り出され、クリップボードへ自動コピーされません。キーはローカル URL のペイロードとして Cherry Studio に渡るため、信頼できる端末で
 のみ実行してください。
+
+下書き保存では Cherry Studio も適用済みの接続も変更しません。システムへ引き渡された後に
+要求が送信され、Cherry Studio 内での確認が必要です。確認待ちを有効化済みとは表示せず、
+完全な復元記録のない取り消しも提供しません。未確認の下書きは保持されます。
 
 ## 対応範囲と制限
 
