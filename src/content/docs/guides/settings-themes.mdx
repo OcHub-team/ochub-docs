@@ -19,6 +19,26 @@ list only hides its navigation entries and does not disable management.
 are under **Environment**. Notifications and the Themes, Settings, and About icons
 stay at the bottom even when the navigation list scrolls.
 
+## Leave a form safely
+
+Unsaved changes in connection, sync, proxy, MCP, route, theme, app-directory,
+and advanced configuration forms are checked before navigation, changing the
+managed environment, or closing the window. A running write must finish first.
+For ordinary forms, choose **Return to form** to save using that page's controls,
+or **Discard and continue**. Connection drafts retain their separate **Save draft**
+workflow.
+
+An interrupted connection keeps the typed form in memory. Reconnecting to the
+same verified node can resume it; it is never submitted to a different node.
+These ordinary forms are not saved across an application restart. Save before
+quitting. When an update is ready to restart the app, the same leave checks apply.
+
+In dropdowns, use **Up/Down** and **Home/End** to move, **Enter/Space** to select,
+and **Escape** to cancel. **Tab** closes the list and continues through the form.
+Clicking the open trigger closes its list. Opening another dialog retires the
+older dropdown. While the notification center is open, the Save shortcut does
+not submit the form behind it.
+
 ## Read notifications
 
 Brief notifications appear in the upper-right area. Long diagnostics stay behind
