@@ -50,8 +50,18 @@ remote plugin.
 
 Disconnection preserves current input, but saving and applying require a reconnect.
 Persisted drafts and text held only in the current window are different states.
-After reconnecting, check the draft revision and operation result before retrying.
+If the connection drops during application, the remote write may have completed
+even when no result reached the desktop. OcHub displays **Previous application is
+unconfirmed** and pauses further saves and applications.
 
+Reconnect to the same node and choose **Check previous application**. OcHub checks
+or safely continues the same submitted draft version; it does not submit newer
+edits in its place. Input entered while waiting remains in the editor. Once the
+result is known, review it before saving or applying any newer changes.
+
+Leaving the editor does not cancel an operation that may already be committed on
+the node. Confirming that you want to discard input loses unsaved changes in the
+current window, so resolve the result before leaving when possible.
 
 ## What the current version can manage
 
