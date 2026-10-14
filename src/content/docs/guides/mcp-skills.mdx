@@ -33,10 +33,10 @@ not manage native Claude Desktop or OpenClaw extensions through these pages.
 <Steps>
 
 1. Open **MCP servers**.
-2. Select **Import from app**.
+2. Open the **Import and sync** icon at the top right, then select **Import from app**. An empty list also offers a direct import action.
 3. OcHub scans supported apps and adds only servers that are not already in
    its shared store.
-4. Review the app list on each card, then select **Sync to apps**.
+4. Review each row's enabled-app summary and expand its arrow to change app toggles.
 
 </Steps>
 
@@ -91,20 +91,19 @@ trust, and verify that the command is on the target tool's `PATH`.
 
 ## Enable and sync MCP
 
-1. Toggle apps on or off on each server card.
-2. After making several changes, select **Sync to apps**.
+1. Expand the arrow at the end of a server row, then toggle apps on or off. Each toggle immediately updates that app's configuration.
+2. To rewrite enabled servers, open **Import and sync** at the top right and select **Sync to apps**.
 3. Restart the target CLI so it reloads configuration.
 4. If the server is missing, check that the app is enabled, the config
    directory is correct, and the server transport is supported by the tool.
 
 <OcHubStepsVisual
   locale="en"
-  labels="Choose apps on the card|Sync all changes|Restart the target CLI|Verify the server appears"
+  labels="Expand a server and choose apps|Resync when needed|Restart the target CLI|Verify the server appears"
   visuals="mcp-targets|mcp-sync|mcp-result|mcp-result"
 />
 
-After deleting an MCP server from OcHub, sync again to update the managed live
-configuration. Deletion cannot be undone, so copy the JSON first if needed.
+Edit, delete, and app toggles are in the expanded server details. Deletion requires confirmation and cannot be undone, so copy the JSON first if needed.
 
 The server list shows a loading status while it is being read. If reading fails,
 select **Retry**. A failed refresh in the same workspace keeps the last loaded

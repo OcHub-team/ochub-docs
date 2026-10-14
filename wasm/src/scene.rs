@@ -622,7 +622,6 @@ impl SceneView {
                 id: SharedString::from(format!("provider-card-{index}")),
                 name: SharedString::from(name.to_string()),
                 endpoint: SharedString::from(endpoint.to_string()),
-                icon: IconName::AgentClaudeCode,
                 is_current: false,
                 is_drag_source: false,
                 drag_handle: Some(
@@ -640,19 +639,33 @@ impl SceneView {
                 quota: None,
                 current_label: SharedString::from(copy.current),
                 actions: vec![
-                    components::action_button(format!("edit-{index}"), copy.edit, false)
+                    components::action_button(format!("switch-{index}"), copy.switch, false)
                         .into_any_element(),
-                    components::action_button(format!("copy-{index}"), copy.copy, false)
-                        .into_any_element(),
-                    components::action_button_tone(
-                        format!("delete-{index}"),
-                        copy.delete,
-                        ButtonTone::Danger,
+                    components::icon_only_button_tone(
+                        format!("more-{index}"),
+                        copy.edit,
+                        IconName::ChevronRight,
+                        ButtonTone::Ghost,
+                        ButtonSize::Sm,
                     )
                     .into_any_element(),
-                    components::action_button(format!("switch-{index}"), copy.switch, true)
-                        .into_any_element(),
                 ],
+                secondary_actions: if self.is(&["connection-copy", "connection-remove"]) {
+                    vec![
+                        components::action_button(format!("edit-{index}"), copy.edit, false)
+                            .into_any_element(),
+                        components::action_button(format!("copy-{index}"), copy.copy, false)
+                            .into_any_element(),
+                        components::action_button_tone(
+                            format!("delete-{index}"),
+                            copy.delete,
+                            ButtonTone::Danger,
+                        )
+                        .into_any_element(),
+                    ]
+                } else {
+                    Vec::new()
+                },
             });
             list = list.child(self.targeted(
                 &[
@@ -1115,6 +1128,15 @@ impl SceneView {
                 endpoint: SharedString::from("npx -y @modelcontextprotocol/server-filesystem"),
                 description: Some(SharedString::from("Access selected workspace files")),
                 apps_label: SharedString::from("Enabled for: Claude Code, Codex"),
+                expanded: self.is(&["mcp-fields", "mcp-targets", "mcp-save", "mcp-sync"]),
+                disclosure: components::icon_only_button_tone(
+                    "mcp-expand-demo",
+                    copy.edit,
+                    IconName::ChevronRight,
+                    ButtonTone::Ghost,
+                    ButtonSize::Sm,
+                )
+                .into_any_element(),
                 actions: vec![
                     components::button(
                         "mcp-edit-demo",
@@ -1209,20 +1231,28 @@ impl SceneView {
                     ButtonTone::Primary,
                     ButtonSize::Sm,
                 ))
-                .child(components::icon_button_tone(
-                    "mcp-import",
-                    "Import",
-                    IconName::Archive,
-                    ButtonTone::Neutral,
+                .child(components::icon_only_button_tone(
+                    "mcp-maintenance",
+                    "Import and sync",
+                    IconName::Settings,
+                    ButtonTone::Ghost,
                     ButtonSize::Sm,
                 ))
-                .child(components::icon_button_tone(
-                    "mcp-sync",
-                    "Sync",
-                    IconName::Refresh,
-                    ButtonTone::Neutral,
-                    ButtonSize::Sm,
-                )),
+                .when(self.is(&["mcp-import", "mcp-sync"]), |header| {
+                    header
+                        .child(components::button(
+                            "mcp-import",
+                            "Import",
+                            ButtonTone::Neutral,
+                            ButtonSize::Sm,
+                        ))
+                        .child(components::button(
+                            "mcp-sync",
+                            "Sync",
+                            ButtonTone::Neutral,
+                            ButtonSize::Sm,
+                        ))
+                }),
             Page::Sessions => div().child(components::icon_button_tone(
                 "sessions-refresh",
                 "Refresh",
